@@ -2,6 +2,8 @@ package mycontroller;
 
 import java.util.HashMap;
 
+import tiles.GrassTrap;
+import tiles.HealthTrap;
 import tiles.MapTile;
 import tiles.TrapTile;
 import utilities.Coordinate;
@@ -276,11 +278,6 @@ public class Radar {
 		if(!driveable) {
 			return false;
 		}
-	
-		// Walls can never be driven over
-//		if (tileType.equals("Wall")){
-//			return false;
-//		}
 		
 		// If it's a dead end, it's not
 		if (map.getDeadEnds().contains(coordinate)) {
@@ -296,6 +293,49 @@ public class Radar {
 		// otherwise return true
 		return true;
 	}
+//	
+//	public boolean isOnHealth(WorldSpatial.Direction orientation) {
+//		int spaceAhead = 0;
+//		for (int sensitivity = 1; sensitivity <= 1; sensitivity++) {
+//			int xOffset = 0;
+//			int yOffset = 0;
+//			
+//			switch (orientation) {
+//				case EAST: {
+//					xOffset = spaceAhead;
+//					yOffset = (-sensitivity);
+//					break;
+//				}
+//				case WEST: {
+//					xOffset = (-spaceAhead);
+//					yOffset = (sensitivity);
+//					break;
+//				}
+//				case NORTH: {
+//					xOffset = sensitivity;
+//					yOffset = spaceAhead;
+//					break;
+//				}
+//				case SOUTH: {
+//					xOffset = (-sensitivity);
+//					yOffset = (-spaceAhead);
+//					break;
+//				}
+//			}
+//			
+//			Coordinate currentPosition = controller.getPositionCoords();
+//			
+//			Coordinate coordinate = new Coordinate(currentPosition.x+xOffset, currentPosition.y+yOffset);
+//			MapTile tile = map.getMap().get(coordinate).getTile();
+//			
+//			if(tile instanceof HealthTrap) {
+//				System.out.println("Health trap here");
+//				return true;
+//			}
+//		}
+//		return false;
+//		
+//	}
 	
 	/**
 	 * Checks to see if the given tile is not able to be passed
@@ -304,7 +344,7 @@ public class Radar {
 	 * @return
 	 */
 	private boolean isImpassableTrap(MapTile mapTile, Coordinate coordinate) {
-		return (mapTile instanceof TrapTile && !map.isPassable(coordinate));
+		return (mapTile instanceof GrassTrap && !map.isPassable(coordinate));
 	}
 
 	/**

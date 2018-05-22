@@ -20,6 +20,13 @@ public class AIController extends CarController {
 	
 	// Car Speed to move at
 	private final float CAR_SPEED = 3;
+	// Car Speed to move at
+		final float MAX_SPEED = (float) 2.4;
+		final float LEFT_SPEED = (float) 1.5;
+		final float RIGHT_SPEED = (float) 0.8;
+
+		final int SLOW_DISTANCE = 3;
+		float targetSpeed = MAX_SPEED;
 	
 	// Offset used to differentiate between 0 and 360 degrees
 	private int EAST_THRESHOLD = 3;

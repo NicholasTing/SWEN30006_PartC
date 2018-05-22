@@ -87,11 +87,18 @@ public class TileWrap {
 //				res = TileType.LAVA;
 //			}
 //		} else {
+		System.out.println(tile.getType());
+		System.out.println("Getting the tile type");
 			switch (tile.getType()) {
-				case WALL: res = TileType.WALL;
+				
+				case WALL: 
+					res = TileType.WALL;
 					break;
-				case ROAD: res = TileType.ROAD;
+					
+				case ROAD: 
+					res = TileType.ROAD;
 					break;
+					
 				case TRAP:
 					if (tile instanceof tiles.GrassTrap) {
 						res = TileType.GRASS;
@@ -109,11 +116,12 @@ public class TileWrap {
 					
 				case FINISH:
 					
-					
 					res = TileType.EXIT;
 					break;
 					
 				default: res = TileType.EMPTY;
+				System.out.println(tile.getType());
+				System.out.println("Empty");
 			}
 //		}
 		

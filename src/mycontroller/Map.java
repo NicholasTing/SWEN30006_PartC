@@ -174,7 +174,14 @@ public class Map {
 	 */
 	private Integer calcSection(TileWrap t, int depth, Integer currSection) {
 		// If tile is a trap or wall, do not expand
-		if (!t.getType().equals(TileType.ROAD)&&!t.getType().equals(TileType.START)&&!t.getType().equals(TileType.EXIT)) {
+		try {
+			TileType t2 = t.getType();
+			if (!t.getType().equals(TileType.ROAD)&&!t.getType().equals(TileType.START)&&!t.getType().equals(TileType.EXIT)) {
+				return null;
+			}
+		}
+		catch(Exception e) {
+			System.out.println("Exception");
 			return null;
 		}
 		
@@ -202,14 +209,23 @@ public class Map {
 		};
 		
 		for (Coordinate c : toCheck) {
-			if (map.containsKey(c)
-					&& map.get(c).getType().equals(TileType.ROAD)
-					&& !visited.contains(map.get(c))) {
-				section = Math.min(section, calcSection(map.get(c),depth+1, section));
-			} else if (map.containsKey(c)
-					&& visited.contains(map.get(c))) {
-				section = Math.min(section, map.get(c).getSection());
-			} 
+			System.out.println("Coordinate checking");
+			
+			try {
+				if (map.containsKey(c)
+						&& map.get(c).getType().equals(TileType.ROAD)
+						&& !visited.contains(map.get(c))) {
+					System.out.println("Coordinate checking 2");
+					System.out.println(map.get(c).getType());
+					section = Math.min(section, calcSection(map.get(c),depth+1, section));
+				} else if (map.containsKey(c)
+						&& visited.contains(map.get(c))) {
+					section = Math.min(section, map.get(c).getSection());
+				} 
+			} catch(Exception e) {
+				System.out.println("next");
+			}
+			
 		}
 		
 		// Increment the next available section number, and allocate
