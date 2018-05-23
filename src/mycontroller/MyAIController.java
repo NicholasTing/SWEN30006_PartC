@@ -32,9 +32,12 @@ public class MyAIController extends CarController {
 	private WorldSpatial.Direction previousOrientation = null; // Keeps track of the previous state
 	
 	// Car Speed to move at
-	final float MAX_SPEED = (float) 2.4;
-	final float LEFT_SPEED = (float) 1.5;
-	final float RIGHT_SPEED = (float) 0.8;
+	final float MAX_SPEED = (float) 4.0;
+	final float LEFT_SPEED = (float) 1.2;
+	final float RIGHT_SPEED = (float) 1.2;
+	
+	// If car is on health, move slower to regain health
+	final float HEALTH_SPEED = (float) 0.2;
 
 	final int SLOW_DISTANCE = 3;
 	float targetSpeed = MAX_SPEED;
@@ -110,9 +113,7 @@ public class MyAIController extends CarController {
 			targetSpeed = MAX_SPEED;
 		}
 	}
-	
 
-	
 	@Override
 	/**
 	 * Update method for the AI controller
@@ -127,6 +128,8 @@ public class MyAIController extends CarController {
 		boolean leftTurnAvailable = checkLeftTurn();
 		Integer isDeadEnd = radar.isDeadEnd(orientation);
 		boolean isFrontBlocked = radar.isBlockedAhead(orientation);
+		
+		boolean isOnHealthTrap = radar.isHealthTrap(orientation);
 			
 		if (isHandlingDeadend()) {
 			// If you're currently handling a dead end, keep doing what you were doing
@@ -165,7 +168,6 @@ public class MyAIController extends CarController {
 	 */
 	private boolean isTurning() {
 		return (manoeuvre instanceof TurnLeft || manoeuvre instanceof TurnRight);
-		
 	}
 
 	/**

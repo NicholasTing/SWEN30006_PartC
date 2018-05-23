@@ -8,6 +8,7 @@ import tiles.MapTile;
 import tiles.TrapTile;
 import utilities.Coordinate;
 import world.WorldSpatial;
+import world.WorldSpatial.Direction;
 /**
  * Project Part C
  * Group 105
@@ -335,6 +336,10 @@ public class Radar {
 //		}
 //		return false;
 //		
+	public boolean isHealthTrap(WorldSpatial.Direction orientation) {
+		// TODO Auto-generated method stub
+		return true;
+	}
 //	}
 	
 	/**
