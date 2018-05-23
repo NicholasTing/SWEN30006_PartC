@@ -7,10 +7,10 @@ import java.util.List;
 import mycontroller.TileWrap.TileType;
 import utilities.Coordinate;
 /**
- * Project Part C
- * Software Modelling and Design - University of Melbourne 2017
- * Group 105
- * Andrew Roche (638338), David Barrell (520704), Hugh Edwards (584183)
+ * SWEN30006 Project Part C
+ * Semester 1, 2018
+ * Group 55
+ * Jing Kun Ting 792886, Dimosthenis Goulas 762684, Yangxuan Cho 847369
  *  Class for managing an internal map of the maze maintained by the AI controller
  *  The map is divided into sections, and visited/unvisited sections are recorded
  *  The class also has methods for calculating the path from one section to another

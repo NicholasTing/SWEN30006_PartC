@@ -5,10 +5,10 @@ import tiles.MapTile;
 import utilities.Coordinate;
 
 /**
- * Project Part C
- * Group 105
- * Andrew Roche (638338), David Barrell (520704), Hugh Edwards (584183)
- * Software Modelling and Design - University of Melbourne 2017
+ * SWEN30006 Project Part C
+ * Semester 1, 2018
+ * Group 55
+ * Jing Kun Ting 792886, Dimosthenis Goulas 762684, Yangxuan Cho 847369
  * Class that keeps track of all the tiles and their types
  */
 public class TileWrap {

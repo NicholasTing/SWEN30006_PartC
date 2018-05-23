@@ -7,10 +7,10 @@ import utilities.Coordinate;
 import world.Car;
 import world.WorldSpatial;
 /**
- * Project Part C
- * Software Modelling and Design - University of Melbourne 2017
- * Group 105
- * Andrew Roche (638338), David Barrell (520704), Hugh Edwards (584183)
+ * SWEN30006 Project Part C
+ * Semester 1, 2018
+ * Group 55
+ * Jing Kun Ting 792886, Dimosthenis Goulas 762684, Yangxuan Cho 847369
  *  Class providing an AI implementation of CarController to escape a maze
  *  Keeps an internal map (Map), checks Radar, and uses Manoeuvres
  *  
