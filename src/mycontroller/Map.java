@@ -90,6 +90,7 @@ public class Map {
 	 *  Updates the car's information
 	 */
 	private void updateCarInformation() {
+		
 		carCoords = radar.getPositionCoords();
 		
 		// if the car has reached a new cell in this delta time frame
@@ -312,7 +313,7 @@ public class Map {
 	 * @param coordinate
 	 * @return
 	 */
-	public boolean  isPassable(Coordinate coordinate) {
+	public boolean isPassable(Coordinate coordinate) {
 		return pathToExit.contains(coordinate);
 	}
 	

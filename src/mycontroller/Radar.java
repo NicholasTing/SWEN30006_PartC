@@ -1,11 +1,14 @@
 package mycontroller;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+
 
 import tiles.GrassTrap;
 import tiles.HealthTrap;
+import tiles.LavaTrap;
 import tiles.MapTile;
-import tiles.TrapTile;
+
 import utilities.Coordinate;
 import world.Car;
 import world.WorldSpatial;
@@ -25,6 +28,9 @@ public class Radar {
 	// How many minimum units the wall is away from the player.
 	private double sideWallSensitivity = 1;
 	private double frontWallSensitivity = 1;
+	
+	// key locations
+	ArrayList<Coordinate> keyLocations = new ArrayList<Coordinate>();
 
 	
 	public Radar(MyAIController controller) {
@@ -61,6 +67,10 @@ public class Radar {
 		default:
 			return false;
 		}
+		
+	}
+	
+	public void findKeys() {
 		
 	}
 	
@@ -296,7 +306,7 @@ public class Radar {
 		return true;
 	}
 
-	public boolean isHealthTrap(WorldSpatial.Direction orientation) {
+	public boolean isHealthTrap() {
 		// TODO Auto-generated method stub
 		Coordinate car = controller.getPositionCoords();
 		if(map.getMap().get(car).getTile() instanceof HealthTrap) {
@@ -304,7 +314,19 @@ public class Radar {
 		}
 		return false;
 	}
+	
+//	public boolean isLavaTrap() {
+//		Coordinate car = controller.getPositionCoords();
+//		if(map.getMap().get(car).getTile() instanceof LavaTrap) {
+//			return true;
+//		}
+//		return false;
 //	}
+//	}
+	public boolean getKey() {
+		Coordinate car = controller.getPositionCoords();
+		return true;
+	}
 	
 	/**
 	 * Checks to see if the given tile is not able to be passed
@@ -342,5 +364,6 @@ public class Radar {
 	public Map getMap() {
 		return map;
 	}
+	
 	
 }

@@ -1,8 +1,10 @@
 package mycontroller;
 
+import java.awt.List;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedList;
 
 import mycontroller.TileWrap.TileType;
 import utilities.Coordinate;
@@ -149,7 +151,7 @@ public class PathFinder {
 				
 				// If the last three nodes are a corner, and the middle one is grass
 				// that is, grass needs to be turned on
-				if (node.prev.type.equals(TileWrap.TileType.LAVA)&&isCorner(node, node.prev, node.prev.prev))
+				if (node.prev.type.equals(TileWrap.TileType.GRASS)&&isCorner(node, node.prev, node.prev.prev))
 				{
 					return true;
 
@@ -306,4 +308,6 @@ public class PathFinder {
 			}
 		return true;
 	}
+	
+	
 }

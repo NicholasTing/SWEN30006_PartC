@@ -2,6 +2,8 @@
 
 package mycontroller;
 
+import java.util.ArrayList;
+
 import controller.CarController;
 import utilities.Coordinate;
 import world.Car;
@@ -12,15 +14,8 @@ import world.WorldSpatial;
  * Group 55
  * Jing Kun Ting 792886, Dimosthenis Goulas 762684, Yangxuan Cho 847369
  *  Class providing an AI implementation of CarController to escape a maze
- *  Keeps an internal map (Map), checks Radar, and uses Manoeuvres
+ *  Keeps an internal map (Map), checks Radar, and uses Maneuvers
  *  
- *  Difference to Design Notes:
- *  We decided to not use any timers as was in the original design because 
- *  it was a temporary solution as opposed to fixing the actual problem.
- *  We have decided to never use the three point turn and the u-turn.
- *  The u-turn is not used because there is no point, our car makes the right
- *  decisions to navigate a dead-end with more than 2 wide anyway.
- *  The three point turn is the same. 
  */
 public class MyAIController extends CarController {
 
@@ -32,11 +27,14 @@ public class MyAIController extends CarController {
 	private WorldSpatial.Direction previousOrientation = null; // Keeps track of the previous state
 	
 	// Car Speed to move at
-	final float MAX_SPEED = (float) 4.0;
+	final float MAX_SPEED = (float) 3.0;
 	final float LEFT_SPEED = (float) 1.5;
-	final float RIGHT_SPEED = (float) 0.8;
+	final float RIGHT_SPEED = (float) 1.0;
+	
+	final float LAVA_SPEED = (float) 4.0;
 
 	final int SLOW_DISTANCE = 3;
+	
 	float targetSpeed = MAX_SPEED;
 
 	// orientation of the car
@@ -48,6 +46,10 @@ public class MyAIController extends CarController {
 	
 	//Healing for the car
 	private boolean isHealing = false;
+	
+	//On lava
+	private boolean isOnLava = false;
+	
 	/** 
 	 * Constructor for MyAIController
 	 * @param car the car
@@ -102,14 +104,12 @@ public class MyAIController extends CarController {
 	 */
 	private void setSpeed() {
 		
-		
-	    if (manoeuvre instanceof TurnLeft || checkLeftTurnAhead(SLOW_DISTANCE)) {
+		if (manoeuvre instanceof TurnLeft || checkLeftTurnAhead(SLOW_DISTANCE)) {
 			targetSpeed = LEFT_SPEED;
 		}
 		else if (manoeuvre instanceof TurnRight || radar.isDirectionBlocked(SLOW_DISTANCE, orientation)) {
 			targetSpeed = RIGHT_SPEED;
 		}
-		
 		else {
 			targetSpeed = MAX_SPEED;
 		}
@@ -131,11 +131,12 @@ public class MyAIController extends CarController {
 		boolean isFrontBlocked = radar.isBlockedAhead(orientation);
 		
 		//If it is on health trap, stop and heal for a bit.
-		boolean isOnHealthTrap = radar.isHealthTrap(orientation);
-			
+		boolean isOnHealthTrap = radar.isHealthTrap();
+		
 		if (isHandlingDeadend()) {
 			// If you're currently handling a dead end, keep doing what you were doing
 		}
+		
 		else if(isOnHealthTrap && car.getHealth() < 100) {
 			car.brake();
 			car.applyReverseAcceleration();
@@ -164,12 +165,7 @@ public class MyAIController extends CarController {
 			radar.updateSectionStart();
 			setManoeuvre(TurnRight.class);
 		}
-//		else if(car.getHealth() < 50 && radar.isOnHealth(orientation)) {
-//			car.brake();
-//		}
-//		else if(car.getHealth() < 100) {
-//			car.brake();
-//		}
+		
 		setSpeed();
 		//actually do what you've chosen
 		manoeuvre.update(delta);
@@ -219,6 +215,10 @@ public class MyAIController extends CarController {
 	 */
 	public void resetTurningCoords() {
 		turningCoordinate = new Coordinate(0,0);
+	}
+	
+	public boolean foundKey() {
+		return true;
 	}
 	
 	public Radar getRadar() {
