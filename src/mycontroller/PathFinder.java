@@ -17,8 +17,6 @@ import utilities.Coordinate;
 public class PathFinder {
 	
 	private Map map;
-	
-	private static final int MUD_OVERLOAD_COST = 999;
 
 	private static final int GRASS_CORNER_COST = 999;
 	
@@ -269,11 +267,6 @@ public class PathFinder {
 				// looking at this tile and the previous two, for trap situations
 				if (prev.prev != null && prev.type != null && type != null && prev.prev.type != null)
 					{
-					
-					// If 3 muds in a row, impassable
-					if (prev.type.equals(TileWrap.TileType.MUD) && type.equals(prev.type)&& type.equals(prev.prev.type)) {
-						cost += MUD_OVERLOAD_COST;
-					}
 					// If the last three nodes are a corner, and the middle one is grass
 					// that is, grass needs to be turned on
 					if (grassCorner(this))

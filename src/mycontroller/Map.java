@@ -175,7 +175,6 @@ public class Map {
 	private Integer calcSection(TileWrap t, int depth, Integer currSection) {
 		// If tile is a trap or wall, do not expand
 		try {
-			TileType t2 = t.getType();
 			if (!t.getType().equals(TileType.ROAD)&&!t.getType().equals(TileType.START)&&!t.getType().equals(TileType.EXIT)) {
 				return null;
 			}

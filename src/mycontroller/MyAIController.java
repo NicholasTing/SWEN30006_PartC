@@ -1,6 +1,6 @@
-package mycontroller;
 
-import java.lang.reflect.InvocationTargetException;
+
+package mycontroller;
 
 import controller.CarController;
 import utilities.Coordinate;
@@ -32,7 +32,7 @@ public class MyAIController extends CarController {
 	private WorldSpatial.Direction previousOrientation = null; // Keeps track of the previous state
 	
 	// Car Speed to move at
-	final float MAX_SPEED = (float) 2.4;
+	final float MAX_SPEED = (float) 4.0;
 	final float LEFT_SPEED = (float) 1.5;
 	final float RIGHT_SPEED = (float) 0.8;
 
@@ -41,9 +41,13 @@ public class MyAIController extends CarController {
 
 	// orientation of the car
 	WorldSpatial.Direction orientation;
+	
 	// a coordinate to determine where the last left turn started
+	// Coordinate to determine last left turn
 	private Coordinate turningCoordinate;
-
+	
+	//Healing for the car
+	private boolean isHealing = false;
 	/** 
 	 * Constructor for MyAIController
 	 * @param car the car
@@ -68,8 +72,7 @@ public class MyAIController extends CarController {
 				if (manoeuvre != null)
 					System.out.println("New manoeuvre: " + manoeuvreClass.getSimpleName());
 				manoeuvre = manoeuvreClass.getConstructor(this.getClass()).newInstance(this);
-			} catch (InstantiationException | IllegalAccessException | IllegalArgumentException
-					| InvocationTargetException | NoSuchMethodException | SecurityException e) {
+			} catch (Exception e) {
 				e.printStackTrace();
 			}
 
@@ -99,7 +102,8 @@ public class MyAIController extends CarController {
 	 */
 	private void setSpeed() {
 		
-		if (manoeuvre instanceof TurnLeft || checkLeftTurnAhead(SLOW_DISTANCE)) {
+		
+	    if (manoeuvre instanceof TurnLeft || checkLeftTurnAhead(SLOW_DISTANCE)) {
 			targetSpeed = LEFT_SPEED;
 		}
 		else if (manoeuvre instanceof TurnRight || radar.isDirectionBlocked(SLOW_DISTANCE, orientation)) {
@@ -110,9 +114,7 @@ public class MyAIController extends CarController {
 			targetSpeed = MAX_SPEED;
 		}
 	}
-	
 
-	
 	@Override
 	/**
 	 * Update method for the AI controller
@@ -127,10 +129,24 @@ public class MyAIController extends CarController {
 		boolean leftTurnAvailable = checkLeftTurn();
 		Integer isDeadEnd = radar.isDeadEnd(orientation);
 		boolean isFrontBlocked = radar.isBlockedAhead(orientation);
+		
+		//If it is on health trap, stop and heal for a bit.
+		boolean isOnHealthTrap = radar.isHealthTrap(orientation);
 			
 		if (isHandlingDeadend()) {
 			// If you're currently handling a dead end, keep doing what you were doing
 		}
+		else if(isOnHealthTrap && car.getHealth() < 100) {
+			car.brake();
+			car.applyReverseAcceleration();
+			System.out.println("health trap");
+			isHealing = true;
+		}
+		else if(car.getHealth() == 100 && isHealing) {
+			car.applyForwardAcceleration();
+			isHealing = false;
+		}
+		
 		// if you're not in the coordinate where you last turned left, and you can turn left, then turn left
 		else if ((!turningCoordinate.equals(getPositionCoords())) && leftTurnAvailable) {			
 			setManoeuvre(TurnLeft.class);
@@ -165,7 +181,6 @@ public class MyAIController extends CarController {
 	 */
 	private boolean isTurning() {
 		return (manoeuvre instanceof TurnLeft || manoeuvre instanceof TurnRight);
-		
 	}
 
 	/**
@@ -188,7 +203,7 @@ public class MyAIController extends CarController {
 	 * @return true if it is
 	 */
 	private boolean isHandlingDeadend() {
-		return (manoeuvre instanceof UTurn || manoeuvre instanceof ThreePointTurn || manoeuvre instanceof ReverseOut);
+		return (manoeuvre instanceof ThreePointTurn || manoeuvre instanceof ReverseOut);
 	}
 	
 	/**

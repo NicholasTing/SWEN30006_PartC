@@ -7,12 +7,14 @@ import tiles.HealthTrap;
 import tiles.MapTile;
 import tiles.TrapTile;
 import utilities.Coordinate;
+import world.Car;
 import world.WorldSpatial;
+import world.WorldSpatial.Direction;
 /**
- * SWEN30006 Project Part C
- * Semester 1, 2018
- * Group 55
+ * Project Part C
+ * Group 105
  * Jing Kun Ting 792886, Dimosthenis Goulas 762684, Yangxuan Cho 847369
+ * Software Modelling and Design - University of Melbourne 2017
  *  Class which provides information about the car's surroundings to the AI controller
  */
 public class Radar {
@@ -293,48 +295,15 @@ public class Radar {
 		// otherwise return true
 		return true;
 	}
-//	
-//	public boolean isOnHealth(WorldSpatial.Direction orientation) {
-//		int spaceAhead = 0;
-//		for (int sensitivity = 1; sensitivity <= 1; sensitivity++) {
-//			int xOffset = 0;
-//			int yOffset = 0;
-//			
-//			switch (orientation) {
-//				case EAST: {
-//					xOffset = spaceAhead;
-//					yOffset = (-sensitivity);
-//					break;
-//				}
-//				case WEST: {
-//					xOffset = (-spaceAhead);
-//					yOffset = (sensitivity);
-//					break;
-//				}
-//				case NORTH: {
-//					xOffset = sensitivity;
-//					yOffset = spaceAhead;
-//					break;
-//				}
-//				case SOUTH: {
-//					xOffset = (-sensitivity);
-//					yOffset = (-spaceAhead);
-//					break;
-//				}
-//			}
-//			
-//			Coordinate currentPosition = controller.getPositionCoords();
-//			
-//			Coordinate coordinate = new Coordinate(currentPosition.x+xOffset, currentPosition.y+yOffset);
-//			MapTile tile = map.getMap().get(coordinate).getTile();
-//			
-//			if(tile instanceof HealthTrap) {
-//				System.out.println("Health trap here");
-//				return true;
-//			}
-//		}
-//		return false;
-//		
+
+	public boolean isHealthTrap(WorldSpatial.Direction orientation) {
+		// TODO Auto-generated method stub
+		Coordinate car = controller.getPositionCoords();
+		if(map.getMap().get(car).getTile() instanceof HealthTrap) {
+			return true;
+		}
+		return false;
+	}
 //	}
 	
 	/**
