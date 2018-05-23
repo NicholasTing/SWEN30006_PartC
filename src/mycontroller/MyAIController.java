@@ -12,7 +12,7 @@ import world.WorldSpatial;
  * Group 55
  * Jing Kun Ting 792886, Dimosthenis Goulas 762684, Yangxuan Cho 847369
  *  Class providing an AI implementation of CarController to escape a maze
- *  Keeps an internal map (Map), checks Radar, and uses Manoeuvres
+ *  Keeps an internal map (Map), checks Radar, and uses Maneuvers
  *  
  *  Difference to Design Notes:
  *  We decided to not use any timers as was in the original design because 
