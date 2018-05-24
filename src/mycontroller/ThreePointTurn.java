@@ -17,14 +17,14 @@ public class ThreePointTurn extends Macro {
 	private boolean turning = true;
 	private boolean forward = false;
 	private boolean movingFwd = false;
-	private Radar radar;
+	private Sensor sensor;
 	private WorldSpatial.Direction initOrientation;
 	
 	private static final int CAR_SPEED = 1;
 	
 	public ThreePointTurn(MyAIController controller) {
 		super(controller);
-		this.radar = controller.getRadar();
+		this.sensor = controller.getSensor();
 	}
 
 	/**
@@ -37,8 +37,8 @@ public class ThreePointTurn extends Macro {
 			initOrientation = controller.getOrientation();
 		}
 		
-		boolean leftBlocked = radar.isDirectionBlocked(2, WorldSpatial.RelativeDirection.LEFT);
-		boolean rightBlocked = radar.isDirectionBlocked(2, WorldSpatial.RelativeDirection.RIGHT);
+		boolean leftBlocked = sensor.isDirectionBlocked(2, WorldSpatial.RelativeDirection.LEFT);
+		boolean rightBlocked = sensor.isDirectionBlocked(2, WorldSpatial.RelativeDirection.RIGHT);
 		
 		if (turning) {
 			turn(delta);
@@ -47,8 +47,8 @@ public class ThreePointTurn extends Macro {
 			controller.resetTurningCoords();
 			controller.setMacro(DriveStraight.class);
 		} else if (leftBlocked && rightBlocked) {
-			if (!radar.getMap().getDeadEnds().contains(controller.getPositionCoords()))
-				radar.getMap().getDeadEnds().add(controller.getPositionCoords());
+			if (!sensor.getMap().getDeadEnds().contains(controller.getPositionCoords()))
+				sensor.getMap().getDeadEnds().add(controller.getPositionCoords());
 			if (controller.getSpeed() < CAR_SPEED)
 				controller.applyForwardAcceleration();
 		} else {
@@ -62,7 +62,7 @@ public class ThreePointTurn extends Macro {
 	 * @return
 	 */
 	private boolean clearFront() {
-		return radar.isDirectionBlocked(1, controller.getOrientation());
+		return sensor.isDirectionBlocked(1, controller.getOrientation());
 	}
 	
 	/**
@@ -72,13 +72,13 @@ public class ThreePointTurn extends Macro {
 	private boolean clearRear() {
 		switch(controller.getOrientation()){
 		case EAST:
-			return radar.isDirectionBlocked(1, WorldSpatial.Direction.WEST);
+			return sensor.isDirectionBlocked(1, WorldSpatial.Direction.WEST);
 		case NORTH:
-			return radar.isDirectionBlocked(1, WorldSpatial.Direction.SOUTH);
+			return sensor.isDirectionBlocked(1, WorldSpatial.Direction.SOUTH);
 		case SOUTH:
-			return radar.isDirectionBlocked(1, WorldSpatial.Direction.NORTH);
+			return sensor.isDirectionBlocked(1, WorldSpatial.Direction.NORTH);
 		case WEST:
-			return radar.isDirectionBlocked(1, WorldSpatial.Direction.EAST);
+			return sensor.isDirectionBlocked(1, WorldSpatial.Direction.EAST);
 		default:
 			return false;
 		}

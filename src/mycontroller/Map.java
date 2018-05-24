@@ -19,7 +19,7 @@ import utilities.Coordinate;
 public class Map {
 		
 	private PathFinder pathFinder;
-	private Radar radar;
+	private Sensor sensor;
 	
 	private Integer maxX = null;
 	private Integer maxY = null;
@@ -48,9 +48,9 @@ public class Map {
 	private HashMap<Coordinate, TileWrap> map = new HashMap<Coordinate, TileWrap>();
 	private HashMap<Coordinate, TileWrap> prevPrintedMap;
 	
-	public Map(Radar radar) {
-		this.radar = radar;
-		this.pathFinder = new PathFinder(this);
+	public Map(Sensor sensor) {
+		this.sensor = sensor;
+		this.pathFinder = new DijkstraPathFinder(this);
 	}
 	
 	/**
@@ -62,7 +62,7 @@ public class Map {
 		updateCarInformation();
 		
 		// updates sections
-		radar.getView().forEach((k,v) -> {
+		sensor.getView().forEach((k,v) -> {
 			if (!map.containsKey(k)) {				
 				TileWrap t = new TileWrap(k,v);
 				calcSection(t);
@@ -90,7 +90,7 @@ public class Map {
 	 *  Updates the car's information
 	 */
 	private void updateCarInformation() {
-		carCoords = radar.getPositionCoords();
+		carCoords = sensor.getPositionCoords();
 		
 		// if the car has reached a new cell in this delta time frame
 		if (!carCoords.equals(prevCoords)) {
@@ -111,7 +111,7 @@ public class Map {
 				else {
 					nextSection = map.get(pathToExit.get(0)).getSection();
 				}
-				radar.getController().resetTurningCoords();
+				sensor.getController().resetTurningCoords();
 			}
 			
 			// if we've reached an exit (and are thus in a new section)

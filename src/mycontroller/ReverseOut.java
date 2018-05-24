@@ -13,14 +13,14 @@ public class ReverseOut extends Macro {
 	
 	private boolean turning = false;
 	private boolean forward = false;
-	private Radar radar;
+	private Sensor radar;
 	private WorldSpatial.Direction initOrientation;
 	
 	private final float REV_CAR_SPEED = (float) -1.5;
 
 	public ReverseOut(MyAIController controller) {
 		super(controller);
-		this.radar = controller.getRadar();
+		this.radar = controller.getSensor();
 	}
 
 	/**

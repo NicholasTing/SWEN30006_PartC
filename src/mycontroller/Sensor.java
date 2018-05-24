@@ -18,7 +18,7 @@ import world.WorldSpatial;
  * Software Modelling and Design - University of Melbourne 2017
  *  Class which provides information about the car's surroundings to the AI controller
  */
-public class Radar {
+public class Sensor {
 	
 	private MyAIController controller;
 	private Map map;
@@ -27,7 +27,7 @@ public class Radar {
 	private double sideWallSensitivity = 1;
 	private double frontWallSensitivity = 1;
 	
-	public Radar(MyAIController controller) {
+	public Sensor(MyAIController controller) {
 		this.controller = controller;
 		this.map = new Map(this);
 	}

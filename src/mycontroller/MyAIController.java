@@ -1,6 +1,7 @@
 package mycontroller;
 
 import controller.CarController;
+
 import utilities.Coordinate;
 import world.Car;
 import world.WorldSpatial;
@@ -9,25 +10,21 @@ import world.WorldSpatial;
  * Semester 1, 2018
  * Group 55
  * Jing Kun Ting 792886, Dimosthenis Goulas 762684, Yangxuan Cho 847369
- *  Class providing an AI implementation of CarController to escape a maze
- *  Keeps an internal map (Map), checks Radar, and uses Maneuvers
+ * Class providing an AI implementation of CarController to escape a maze
+ * Keeps an internal map (Map), checks Sensors to determine what is in its
+ * surround locations, and uses Macros to move
  *  
- *  Difference to Design Notes:
- *  We decided to not use any timers as was in the original design because 
- *  it was a temporary solution as opposed to fixing the actual problem.
- *  We have decided to never use the three point turn and the u-turn.
- *  The u-turn is not used because there is no point, our car makes the right
- *  decisions to navigate a dead-end with more than 2 wide anyway.
- *  The three point turn is the same. 
  */
 public class MyAIController extends CarController {
 
 	private Car car;
 	private Macro macro;
-	private Radar radar;
+	private Sensor sensor;
 	
-	private boolean isFollowingWall = false; // This is initialized when the car sticks to a wall.
-	private WorldSpatial.Direction previousOrientation = null; // Keeps track of the previous state
+	// This is initialized when the car sticks to a wall.
+	private boolean isFollowingWall = false; 
+	// Keeps track of the previous state
+	private WorldSpatial.Direction previousOrientation = null; 
 	
 	// Car Speed to move at
 	final float MAX_SPEED = (float) 4.0;
@@ -43,7 +40,7 @@ public class MyAIController extends CarController {
 	WorldSpatial.Direction orientation;
 	
 	// a coordinate to determine where the last left turn started
-	// Coordinate to determine last left turn
+	// Coordinate to determine the last left turn
 	private Coordinate turningCoordinate;
 	
 	//Healing for the car
@@ -59,30 +56,30 @@ public class MyAIController extends CarController {
 	public MyAIController(Car car) {
 		super(car);
 		this.car = car;
-		this.radar = new Radar(this);
+		this.sensor = new Sensor(this);
 		setMacro(DriveStraight.class);
 		previousOrientation = orientation;
 		turningCoordinate = new Coordinate(0,0);
 
 	}
 
-	/** 
-	 * This changes the car's current manoeuvre to the manoeuvre class passed in as a parameter
-	 * @param manoeuvreClass the manoeuvre you want to change to
+	/**
+	 * This set the car's current macro to the macro class posted in as a parameter in relevant updates.
+	 * @param macroClass the macro you want to change to
 	 */
 	public <T extends Macro> void setMacro(Class<T> macroClass) {
 
 		if (!macroClass.isInstance(macro)) {	
 			try {
-				if (macro != null)
-					System.out.println("New manoeuvre: " + macroClass.getSimpleName());
+				if (macro != null) {
+					System.out.println("New macro: " + macroClass.getSimpleName());
+				}
 				macro = macroClass.getConstructor(this.getClass()).newInstance(this);
+				
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-
 		}
-		
 	}
 	
 	/**
@@ -90,7 +87,7 @@ public class MyAIController extends CarController {
 	 * @return true if there is a left turn available
 	 */
 	private boolean checkLeftTurn() {
-		return isFollowingWall && !radar.isFollowingBoundary(orientation) && !(macro instanceof TurnRight);
+		return isFollowingWall && !sensor.isFollowingBoundary(orientation) && !(macro instanceof TurnRight);
 	}
 	
 	/**
@@ -99,7 +96,7 @@ public class MyAIController extends CarController {
 	 * @return true if there is a left turn
 	 */
 	private boolean checkLeftTurnAhead(int tilesAhead) {
-		return isFollowingWall &&  radar.isLeftOpenAhead(tilesAhead, orientation) && !(macro instanceof TurnRight);
+		return isFollowingWall &&  sensor.isLeftOpenAhead(tilesAhead, orientation) && !(macro instanceof TurnRight);
 	}
 	
 	/**
@@ -108,7 +105,7 @@ public class MyAIController extends CarController {
 	 * @return true if there is a left turn
 	 */
 	private boolean checkLavaAhead(int tilesAhead) {
-		return isFollowingWall &&  radar.isLavaAhead(orientation) && !(macro instanceof TurnRight);
+		return isFollowingWall &&  sensor.isLavaAhead(orientation) && !(macro instanceof TurnRight);
 	}
 	
 	/**
@@ -123,7 +120,7 @@ public class MyAIController extends CarController {
 		else if (macro instanceof TurnLeft || checkLeftTurnAhead(SLOW_DISTANCE)) {
 			targetSpeed = LEFT_SPEED;
 		}
-		else if (macro instanceof TurnRight || radar.isDirectionBlocked(SLOW_DISTANCE, orientation)) {
+		else if (macro instanceof TurnRight || sensor.isDirectionBlocked(SLOW_DISTANCE, orientation)) {
 			targetSpeed = RIGHT_SPEED;
 		}
 		
@@ -131,37 +128,30 @@ public class MyAIController extends CarController {
 			targetSpeed = MAX_SPEED;
 		}
 	}
-	
-	private int carGoingInCirclesLava = 0;
-	private boolean reversing = false;
-	
-	private int middleTime = 0;
+
 	@Override
 	/**
 	 * Update method for the AI controller
-	 * Governs all its behaviour every delta milliseconds
+	 * Relevant cases included inside this method.
 	 */
 	public void update(float delta) {
 		// gets orientation
 		orientation = getOrientation();
-		radar.updateMap();	
+		sensor.updateMap();	
 		checkOrientationChange();	
 		
 		boolean leftTurnAvailable = checkLeftTurn();
-		Integer isDeadEnd = radar.isDeadEnd(orientation);
-		boolean isFrontBlocked = radar.isBlockedAhead(orientation);
+		Integer isDeadEnd = sensor.isDeadEnd(orientation);
+		boolean isFrontBlocked = sensor.isBlockedAhead(orientation);
 		
 		//If it is on health trap, stop and heal for a bit.
-		boolean isOnHealthTrap = radar.isHealthTrap(orientation);
+		boolean isOnHealthTrap = sensor.isHealthTrap(orientation);
 		
 		//Finish tile
-		boolean travelledTheMap = radar.endTile();
+		boolean travelledTheMap = sensor.endTile();
 		
-		boolean isLavaAhead = radar.isLavaAhead(orientation);
+		boolean isLavaAhead = sensor.isLavaAhead(orientation);
 		
-		boolean yolo = true;
-		
-		System.out.println(car.getKey());
 		if (isHandlingDeadend()) {
 			// If you're currently handling a dead end, keep doing what you were doing
 		}
@@ -205,11 +195,10 @@ public class MyAIController extends CarController {
 		// if you can't turn left and the front is blocked ahead, turn right
 		else if (!isTurning() && isFrontBlocked){
 			isFollowingWall = true;
-			radar.updateSectionStart();
+			sensor.updateSectionStart();
 			setMacro(TurnRight.class);
 		}
-
-		
+	
 		setSpeed();
 		//actually do what you've chosen
 		macro.update(delta);
@@ -262,7 +251,7 @@ public class MyAIController extends CarController {
 		turningCoordinate = new Coordinate(0,0);
 	}
 	
-	public Radar getRadar() {
-		return radar;
+	public Sensor getSensor() {
+		return sensor;
 	}
 }
