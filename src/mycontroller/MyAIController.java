@@ -1,5 +1,7 @@
 package mycontroller;
 
+import java.util.ArrayList;
+
 import controller.CarController;
 
 import utilities.Coordinate;
@@ -99,15 +101,15 @@ public class MyAIController extends CarController {
 		return isFollowingWall &&  sensor.isLeftOpenAhead(tilesAhead, orientation) && !(macro instanceof RightTurn);
 	}
 	
-	/**
-	 * Checks to see if there is a left turn available that the car will get to
-	 * @param tilesAhead how many tiles ahead it's checking for a left turn
-	 * @return true if there is a left turn
-	 */
-	private boolean checkLavaAhead(int tilesAhead) {
-		return isFollowingWall &&  sensor.isLavaAhead(orientation) && !(macro instanceof RightTurn);
-	}
-	
+//	/**
+//	 * Checks to see if there is a lava ahead, the car will slow down
+//	 * @param tilesAhead how many tiles ahead it's checking for a left turn
+//	 * @return true if there is a left turn
+//	 */
+//	private boolean checkLavaAhead(int tilesAhead) {
+//		return isFollowingWall &&  sensor.isLavaAhead(orientation) && !(macro instanceof RightTurn);
+//	}
+//	
 	/**
 	 * Setting the speed of the car
 	 */
@@ -137,7 +139,9 @@ public class MyAIController extends CarController {
 	public void update(float delta) {
 		// gets orientation
 		orientation = getOrientation();
-		sensor.updateMap();	
+		
+		sensor.exploreMap();
+		
 		checkOrientationChange();	
 		
 		boolean leftTurnAvailable = checkLeftTurn();
@@ -150,26 +154,17 @@ public class MyAIController extends CarController {
 		//Finish tile
 		boolean travelledTheMap = sensor.endTile();
 		
-		boolean isLavaAhead = sensor.isLavaAhead(orientation);
+		//boolean isLavaAhead = sensor.isLavaAhead(orientation);
 		
-		if (isHandlingDeadend()) {
-			// If you're currently handling a dead end, keep doing what you were doing
-		}
+		// Collected all the keys
+		boolean allKeysCollected = collectedAllKeys();
 		
-		else if(car.getKey() == 1) {
-			System.out.println("Done");
+		if(car.getHealth() < 100 && isOnHealthTrap) {
 			
-			car.applyReverseAcceleration();
-			
-			targetSpeed = (float)-2.0;
-			setMacro(Reverse.class);
-		}
-		
-		else if(isOnHealthTrap && car.getHealth() < 100 ) {
 			car.brake();
 			targetSpeed = (float)1.0;
 			car.applyReverseAcceleration();
-			System.out.println("health trap");
+			System.out.println("Car is healing. Please wait.");
 			isHealing = true;
 		}
 		
@@ -179,8 +174,17 @@ public class MyAIController extends CarController {
 			isHealing = false;
 		}
 		
+		else if (isHandlingDeadend()) {
+			// If you're currently handling a dead end, keep doing what you were doing
+		}
+		
+		else if(allKeysCollected) {
+			System.out.println("Done");
+			driveToExit();
+		}
+		
 		// if you're not in the coordinate where you last turned left, and you can turn left, then turn left
-		else if ((!turningCoordinate.equals(getPositionCoords())) && leftTurnAvailable) {			
+		else if ((!turningCoordinate.equals(getCarCoords())) && leftTurnAvailable) {			
 			setMacro(LeftTurn.class);
 		}
 		
@@ -204,8 +208,25 @@ public class MyAIController extends CarController {
 		macro.update(delta);
 	}
 	
+	private void driveToExit() {
+		
+		ArrayList<Coordinate> exit = sensor.getMap().getExitPath();
+		ArrayList<Coordinate> followPathToExit = getPathToExit(exit);
+				
+		targetSpeed = (float)-2.0;
+		applyReverseAcceleration();
+		setMacro(Reverse.class);
+		
+	}
+
+	private boolean collectedAllKeys() {
+		// TODO Auto-generated method stub
+		return car.getKey() == 1;
+	}
+
 	/**
-	 * Checks to see if the car is currently turning
+	 * Returns if the car is turning left or right
+	 * 
 	 * @return true if it is turning
 	 */
 	private boolean isTurning() {
@@ -216,11 +237,13 @@ public class MyAIController extends CarController {
 	 * Checks whether the car's state has changed or not, if it has, set the previous orientation
 	 * to the current orientation. Additionally, if it's turning left, take the turning coordinate
 	 * to be the current coordinate
+	 * 
+	 * If the car 
 	 */
 	private void checkOrientationChange() {
 		if (previousOrientation != orientation) {
 			if (macro instanceof LeftTurn) {
-				turningCoordinate = getPositionCoords();
+				turningCoordinate = getCarCoords();
 			}
 			setMacro(Forward.class);
 			previousOrientation = orientation;
@@ -228,19 +251,34 @@ public class MyAIController extends CarController {
 	}
 	
 	/**
-	 * Checks to see if the car is currently handling a dead end
+	 * Return if the car is handling a dead-end.
+	 * 
 	 * @return true if it is
 	 */
 	private boolean isHandlingDeadend() {
 		return (macro instanceof ThreePointTurn || macro instanceof Reverse);
 	}
 	
+	private ArrayList<Coordinate> getPathToExit(ArrayList<Coordinate> exit) {
+		
+		ArrayList<Coordinate> exitInOrder = new ArrayList<Coordinate>();
+		try {
+			while(exit != null) {
+				Coordinate nextMove = exit.remove(0);
+				exitInOrder.add(nextMove);
+				System.out.println(nextMove.toString());
+			}
+		} catch (Exception e) {
+			
+		}
+		return exitInOrder;
+	}
 	
 	/**
 	 * Gets the car's current position
 	 * @return the car's coordinates
 	 */
-	public Coordinate getPositionCoords() {
+	public Coordinate getCarCoords() {
 		return new Coordinate(Math.round(car.getX()),Math.round(car.getY()));
 	}
 	

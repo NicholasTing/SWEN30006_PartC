@@ -5,15 +5,17 @@ import java.util.HashMap;
 import java.util.List;
 
 import mycontroller.Tile.TileType;
+import tiles.MapTile;
 import utilities.Coordinate;
 /**
  * SWEN30006 Project Part C
  * Semester 1, 2018
  * Group 55
  * Jing Kun Ting 792886, Dimosthenis Goulas 762684, Yangxuan Cho 847369
- *  Class for managing an internal map of the maze maintained by the AI controller
- *  The map is divided into sections, and visited/unvisited sections are recorded
- *  The class also has methods for calculating the path from one section to another
+ * 
+ * Class for managing an internal map of the maze maintained by the AI controller
+ * The map is divided into sections, and visited/unvisited sections are recorded
+ * The class also has methods for calculating the path from one section to another
  *
  */
 public class Map {
@@ -26,8 +28,9 @@ public class Map {
 	private Integer minX = null;
 	private Integer minY = null;
 	
-	// Car's current position
+	// Get the cars current coordinate
 	private Coordinate carCoords = null;
+	
 	// Car's position in the previous update
 	// Used to tell if the car has moved to a new cell
 	private Coordinate prevCoords = null;
@@ -41,12 +44,14 @@ public class Map {
 	private Integer nextSection = null;
 	
 	// Maps coordinates to true if they are on the path to the exit and false otherwise
-	private ArrayList<Coordinate> pathToExit = new ArrayList<Coordinate>();
+	private ArrayList<Coordinate> exitPath = new ArrayList<Coordinate>();
 	
 	private ArrayList<Coordinate> deadEnds = new ArrayList<Coordinate>();
 	
+	private HashMap<Integer, Coordinate> keysLocation = new HashMap<Integer, Coordinate>();
+	
 	private HashMap<Coordinate, Tile> map = new HashMap<Coordinate, Tile>();
-	private HashMap<Coordinate, Tile> prevPrintedMap;
+	
 	
 	public Map(Sensor sensor) {
 		this.sensor = sensor;
@@ -57,9 +62,10 @@ public class Map {
 	 *  Updates the internal map
 	 *  This is called at the update method of the AI controller, through the radar
 	 */
-	public void updateMap() {
+	public void exploreMap() {
 		
-		updateCarInformation();
+		updateCarDetails();
+		updateKeysLocation();
 		
 		// updates sections
 		sensor.getView().forEach((k,v) -> {
@@ -87,9 +93,31 @@ public class Map {
 	}
 	
 	/**
-	 *  Updates the car's information
+	 * While traversing the map, when keys are found, add it into the hash map of keys for find path
+	 * their location in later stages.
 	 */
-	private void updateCarInformation() {
+	private void updateKeysLocation() {
+		
+		try {
+			HashMap<Coordinate, MapTile> view = sensor.getView();
+			
+			if(view != null) {
+				for(Coordinate coord : view.keySet()) {
+					if(!(map.get(coord).getTile() instanceof MapTile)) {
+						keysLocation.put(1, coord);
+					}
+				}
+			}
+		} catch(Exception e) {
+			
+		}
+		
+	}
+
+	/**
+	 *  Updates the car's details, including coordinates, orientation
+	 */
+	private void updateCarDetails() {
 		carCoords = sensor.getPositionCoords();
 		
 		// if the car has reached a new cell in this delta time frame
@@ -101,16 +129,16 @@ public class Map {
 				//Remove the dead ends that were present in the start.
 				deadEnds = new ArrayList<Coordinate>();
 				
-				// Find path to next section
-				pathToExit = pathFinder.lowestCostExit(carCoords);
+				// Find the best path
+				exitPath = pathFinder.calculateBestPath(carCoords);
 				
 				// If there is no path, set all traps as passable, by setting the path as including all tiles on the map
-				if (pathToExit.size()==0) {
-					System.out.println("box");
-					pathToExit=allMapCoordinates();
+				if (exitPath.size()==0) {
+					
+					exitPath=allMapCoordinates();
 				}
 				else {
-					nextSection = map.get(pathToExit.get(0)).getSection();
+					nextSection = map.get(exitPath.get(0)).getSection();
 				}
 				sensor.getController().realign();
 			}
@@ -124,7 +152,7 @@ public class Map {
 					startSectionCoords = carCoords;
 					
 					// reset the path to the exit to empty (so the car doesn't go back through the old traps on the previous path
-					pathToExit = new ArrayList<Coordinate>();
+					exitPath = new ArrayList<Coordinate>();
 					
 					// Remove any deadends
 					deadEnds = new ArrayList<Coordinate>();
@@ -156,7 +184,7 @@ public class Map {
 	 */
 	private Integer calcSection(Tile t) {
 		visited = new ArrayList<Tile>();		
-		return calcSection(t, 0, Integer.MAX_VALUE);
+		return calcCost(t, 0, Integer.MAX_VALUE);
 	}
 	
 	/**
@@ -172,7 +200,7 @@ public class Map {
 	 * @param currSection
 	 * @return
 	 */
-	private Integer calcSection(Tile t, int depth, Integer currSection) {
+	private Integer calcCost(Tile t, int depth, Integer currSection) {
 		// If tile is a trap or wall, do not expand
 		try {
 			if (!t.getType().equals(TileType.ROAD)&&!t.getType().equals(TileType.START)&&!t.getType().equals(TileType.EXIT)) {
@@ -180,7 +208,7 @@ public class Map {
 			}
 		}
 		catch(Exception e) {
-			System.out.println("Exception");
+			
 			return null;
 		}
 		
@@ -213,15 +241,14 @@ public class Map {
 				if (map.containsKey(c)
 						&& map.get(c).getType().equals(TileType.ROAD)
 						&& !visited.contains(map.get(c))) {
-					System.out.println("Coordinate checking 2");
-					System.out.println(map.get(c).getType());
-					section = Math.min(section, calcSection(map.get(c),depth+1, section));
+					
+					section = Math.min(section, calcCost(map.get(c),depth+1, section));
 				} else if (map.containsKey(c)
 						&& visited.contains(map.get(c))) {
 					section = Math.min(section, map.get(c).getSection());
 				} 
 			} catch(Exception e) {
-				System.out.println("next");
+				
 			}
 			
 		}
@@ -236,38 +263,6 @@ public class Map {
 		t.setSection(section);
 		return section;
 		
-	}
-	
-	/**
-	 * Prints the map, if it has been updated since the last print
-	 */
-	@SuppressWarnings("unchecked")
-	public void printMap() {
-		if (prevPrintedMap != null && prevPrintedMap.equals(map)) {
-			return;
-		}
-		
-		Coordinate c;
-		for (int j = maxY; j >= minY; j--) {
-			for (int i = minX; i <= maxX; i++) {
-				c = new Coordinate(i,j);
-				String v;
-				if (carCoords.equals(c)) {
-					v = "C";
-				}
-				else if (map.containsKey(c) && map.get(c).getType().equals(TileType.ROAD)) {
-					v = String.valueOf(map.get(c).getSection());
-				} else {
-					v = map.containsKey(c) ? map.get(c).toString() : " ";
-				} 
-				
-				System.out.print(v + " ");
-			}
-			System.out.println();
-		}
-		System.out.println("\n");
-		
-		prevPrintedMap = (HashMap<Coordinate, Tile>) map.clone();
 	}
 
 	/**
@@ -299,22 +294,32 @@ public class Map {
 		return minY;
 	}
 	
-	public ArrayList<Coordinate> getPathToExit() {
-		return pathToExit;
+	// Returns the shortest path to exit according to the algorithm used.
+	public ArrayList<Coordinate> getExitPath() {
+		if(!keysLocation.isEmpty()) {
+			returnPathToKeys();
+		}
+		return exitPath;
 	}
 	
+	private void returnPathToKeys() {
+		// Should implement Dijkstra or A* here but due to the lack of time, we couldnt.:(
+	}
+
+	// Returns the array list which contains dead end.
 	public ArrayList<Coordinate> getDeadEnds() {
 		return deadEnds;
 	}
+	
 	/**
-	 * Checks to see if the current coordinate is able to be driven through
+	 * Returns a boolean, checking whether the array list contains the coordinate which 
+	 * is inside the shortest path to exit.
+	 * 
 	 * @param coordinate
 	 * @return
 	 */
 	public boolean isPassable(Coordinate coordinate) {
-		return pathToExit.contains(coordinate);
+		return exitPath.contains(coordinate);
 	}
-	
-
 	
 }

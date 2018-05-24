@@ -13,8 +13,7 @@ import utilities.Coordinate;
  * Group 55
  * Jing Kun Ting 792886, Dimosthenis Goulas 762684, Yangxuan Cho 847369
  * 
- * Dijkstra path finding algorithm
- *
+ * Dijkstra path finding algorithm with code sources online.
  */
 
 public class DijkstraPathFinder implements PathFinder{
@@ -23,6 +22,7 @@ public class DijkstraPathFinder implements PathFinder{
 
 	private static final int LAVA_COST = 999;
 	
+	// Creates a hash map for section explored in the map.
     private HashMap<Integer, Boolean> sectionExplored = new HashMap<Integer,Boolean>();
     
 	public DijkstraPathFinder(Map map) {
@@ -30,7 +30,9 @@ public class DijkstraPathFinder implements PathFinder{
 	}
 	
 	/**
-	 * Get the cost of the tile at the coordinate given
+	 * If the map contains the coordinate, return the tile cost, else
+	 * returns integer max value if the map does not contain the coordinate.
+	 * 
 	 * @param coordinate the coordinate
 	 * @return the cost
 	 */
@@ -43,24 +45,25 @@ public class DijkstraPathFinder implements PathFinder{
 	}
 	
 	/**
-	 * Calculates the lowestCostExit from the current section
-	 * Updates pathToExit
+	 * Calculates the lowest cost to exit from the coordinate given to us.
+	 * Updates pathToExit along the way
 	 * 
 	 * @param from the coordinates to calculate the path from
 	 * @return the coordinates of the destination tile in the new section
 	 */
-	public ArrayList<Coordinate> lowestCostExit(Coordinate from) {
+	public ArrayList<Coordinate> calculateBestPath(Coordinate from) {
+		
+		// Create the first node.
+		CoordinateNode startNode = new CoordinateNode(from, null);
 	
-		// initialise a priority queue of CoordinateNodes
+		// Initialise queue
 		ArrayList<CoordinateNode> queue = new ArrayList<CoordinateNode>();
-				
-		// add the first node in the path
-		CoordinateNode first = new CoordinateNode(from, null);
-		queue.add(first);
+
+		queue.add(startNode);
 		
 		HashMap<Coordinate,Boolean> expanded = new HashMap<Coordinate,Boolean>();
-		
-		// find the section that the car is in
+
+		// Get the section that the car is in
 		Integer carSection = map.getMap().get(from).getSection();
 		
 		sectionExplored.put(carSection, false);
@@ -73,10 +76,10 @@ public class DijkstraPathFinder implements PathFinder{
 		// Apply Min-cost-search algorithm
 		while (queue.size() > 0) {
 			
-			// sorts queue by cost (ascending order)
+			// Sorts the queue in ascending order
 			Collections.sort(queue);
 			
-			// gets lowest cost node
+			// Return the lowest cost node
 			CoordinateNode node = queue.get(0);
 			queue.remove(0);
 			
@@ -91,7 +94,7 @@ public class DijkstraPathFinder implements PathFinder{
 					}
 					
 					if (node.cost == minCost) {
-						getPathToExit(node, exits);
+						getExitPath(node, exits);
 					} else if (node.cost > minCost) {
 						return exits;
 					}
@@ -104,7 +107,7 @@ public class DijkstraPathFinder implements PathFinder{
 					}
 					
 					if (node.cost == minCostReturn) {
-						getPathToExit(node, exitsReturn);
+						getExitPath(node, exitsReturn);
 					}
 					
 				} else if (!(newSection != null && !newSection.equals(carSection)
@@ -133,8 +136,8 @@ public class DijkstraPathFinder implements PathFinder{
 	}
 	
 	/**
-	 *  Returns true if the node is the last node in a corner with grass in the middle
-	 *  That is, an impassable corner due to grass
+	 * Returns true if it is a lava tile. 
+	 * 
 	 * @param node
 	 * @return
 	 */
@@ -146,17 +149,14 @@ public class DijkstraPathFinder implements PathFinder{
 			if (node.prev.prev != null && node.prev.type != null && node.type != null && node.prev.prev.type != null)
 				{
 				
-				// If the last three nodes are a corner, and the middle one is grass
-				// that is, grass needs to be turned on
+				// If the previous tile is a lava tile.
 				if (node.prev.type.equals(Tile.TileType.LAVA))
 				{
 					return true;
-
 				}
 				
 			}
 		}
-		// TODO Auto-generated method stub
 		return false;
 	}
 
@@ -165,7 +165,7 @@ public class DijkstraPathFinder implements PathFinder{
 	 *  All nodes in the path will now be passable (ie all traps can be traversed)
 	 * @param node the node
 	 */
-	public void getPathToExit(CoordinateNode node, ArrayList<Coordinate> exits) {
+	public void getExitPath(CoordinateNode node, ArrayList<Coordinate> exits) {
 		
 		// steps backwards through the path from end to start
 		while (true) {
@@ -187,7 +187,8 @@ public class DijkstraPathFinder implements PathFinder{
 	}
 	
 	/**
-	 *  Enqueues nodes in the least cost search queue if they are valid
+	 * Enqueues nodes in the least cost search queue if they are valid
+	 * 
 	 * @param node the node to be enqueued
 	 * @param queue the queue to enqueue the node in
 	 * @param expanded a 2d array of expanded coordinates
@@ -214,7 +215,7 @@ public class DijkstraPathFinder implements PathFinder{
 	
 	/**
 	 *  Class for storing nodes in a path
-	 *  That is, holds the coordinates of the node, its previous node, and its cost
+	 *  Contains coordinates of the node, its previous node, and the cost of the node
 	 *
 	 */
 	private class CoordinateNode implements Comparable<CoordinateNode> {
@@ -224,9 +225,10 @@ public class DijkstraPathFinder implements PathFinder{
 		private Tile.TileType type;
 		
 		/**
-		 *  Constructor for CoordinateNode
-		 * @param coordinate coordinate of node
-		 * @param prev previous node in path
+		 * Constructor for CoordinateNode
+		 * 
+		 * @param coordinate 
+		 * @param prev 
 		 */
 		private CoordinateNode(Coordinate coordinate, CoordinateNode prev) {
 			this.coordinate = coordinate;
@@ -242,7 +244,7 @@ public class DijkstraPathFinder implements PathFinder{
 		}
 		
 		/**
-		 * Constructor for the Node
+		 * Node constructor - CoordinateNode
 		 * 
 		 * @param x x position
 		 * @param y y position
@@ -267,7 +269,7 @@ public class DijkstraPathFinder implements PathFinder{
 				// looking at this tile and the previous two, for trap situations
 				if (prev.prev != null && prev.type != null && type != null && prev.prev.type != null)
 					{
-					// If the tils i made out of lava, add the cost.
+					// If the tile is made out of lava, add the cost.
 					if (isLavaTile(this))
 					{
 						cost += LAVA_COST;

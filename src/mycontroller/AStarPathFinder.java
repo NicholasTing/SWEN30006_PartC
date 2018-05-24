@@ -279,7 +279,7 @@ public class AStarPathFinder implements PathFinder {
 	 * At this stage, its too late to change and it would not work.
 	 */
 	@Override
-	public ArrayList<utilities.Coordinate> lowestCostExit(utilities.Coordinate from) {
+	public ArrayList<utilities.Coordinate> calculateBestPath(utilities.Coordinate from) {
 		// TODO Auto-generated method stub
 		return null;
 	}

@@ -15,16 +15,17 @@ import utilities.Coordinate;
 public abstract interface PathFinder {
 
 	/**
-	 *  Calculates the lowestCostExit from the current section
-	 *  Updates the pathToExit 
+	 * Calculates the lowestCostExit from the current section
+	 * Updates the pathToExit 
 	 *  
-	 * TO DO: 
-	 * 1 Maps out the whole unexplored section of the map
-	 *  
-	 * @param from the coordinates to calculate the path from
+	 * By using the currentView of the car, explores the map and draws its own map
+	 * Updates the path to exit and then applies its specific algorithm to find the 
+	 * lowest Cost to exit.
+	 *
+	 * @param from the coordinate you want to calculate the shortest path from
 	 * @return the coordinates of the destination tile in the new section
 	 */
-	public abstract ArrayList<Coordinate> lowestCostExit(Coordinate from);
+	public abstract ArrayList<Coordinate> calculateBestPath(Coordinate from);
 	
 	
 }

@@ -16,6 +16,9 @@ import world.WorldSpatial;
  * Group 105
  * Jing Kun Ting 792886, Dimosthenis Goulas 762684, Yangxuan Cho 847369
  * Software Modelling and Design - University of Melbourne 2017
+ * 
+ * Sensor to the car where the car will be able to detect what is in the surrounding areas, and make amendments to the car's initial pathing.
+ * The sensor provides information about the car's surroundings 
  *  Class which provides information about the car's surroundings to the AI controller
  */
 public class Sensor {
@@ -130,7 +133,7 @@ public class Sensor {
 		}
 		
 		// Loop through the tiles up to sensitivity to check if the car can drive through them
-		Coordinate currentPosition = controller.getPositionCoords();
+		Coordinate currentPosition = controller.getCarCoords();
 			for(int i = 0; i <= sensitivity; i++){
 				
 				Coordinate coordinate = new Coordinate(currentPosition.x+i*xModifier, currentPosition.y+i*yModifier);
@@ -174,7 +177,7 @@ public class Sensor {
 		}
 		
 		// Loop through the tiles up to sensitivity to check if the car can drive through them
-		Coordinate currentPosition = controller.getPositionCoords();
+		Coordinate currentPosition = controller.getCarCoords();
 			for(int i = 0; i <= sensitivity; i++){
 				
 				Coordinate coordinate = new Coordinate(currentPosition.x+i*xModifier, currentPosition.y+i*yModifier);
@@ -224,7 +227,7 @@ public class Sensor {
 			}
 		}
 		
-		Coordinate currentPosition = controller.getPositionCoords();
+		Coordinate currentPosition = controller.getCarCoords();
 		for(int i = 0; i <= sensitivity; i++){
 			
 			Coordinate coordinate = new Coordinate(currentPosition.x+i*xModifier+xOffset, currentPosition.y+i*yModifier+yOffset);
@@ -276,7 +279,7 @@ public class Sensor {
 				}
 			}
 			
-			Coordinate currentPosition = controller.getPositionCoords();
+			Coordinate currentPosition = controller.getCarCoords();
 			
 			Coordinate coordinate = new Coordinate(currentPosition.x+xOffset, currentPosition.y+yOffset);
 			MapTile tile = map.getMap().get(coordinate).getTile();
@@ -332,7 +335,7 @@ public class Sensor {
 				}
 			}
 			
-			Coordinate currentPosition = controller.getPositionCoords();
+			Coordinate currentPosition = controller.getCarCoords();
 			
 			Coordinate coordinate = new Coordinate(currentPosition.x+xOffset, currentPosition.y+yOffset);
 			MapTile tile = map.getMap().get(coordinate).getTile();
@@ -394,7 +397,7 @@ public class Sensor {
 
 	public boolean isHealthTrap(WorldSpatial.Direction orientation) {
 		// TODO Auto-generated method stub
-		Coordinate car = controller.getPositionCoords();
+		Coordinate car = controller.getCarCoords();
 		if(map.getMap().get(car).getTile() instanceof HealthTrap) {
 			return true;
 		}
@@ -413,10 +416,14 @@ public class Sensor {
 	}
 
 	/**
-	 * Updates the map
+	 * Everytime controller is updated, it updates the map to find the shortest path.
 	 */
-	public void updateMap() {
-		map.updateMap();
+	public void exploreMap() {
+		map.exploreMap();
+	}
+	
+	public boolean detectKey(int key) {
+		return controller.getKey() == key;
 	}
 	
 	public MyAIController getController() {
@@ -428,7 +435,7 @@ public class Sensor {
 	}
 	
 	public Coordinate getPositionCoords() {
-		return controller.getPositionCoords();
+		return controller.getCarCoords();
 	}
 	
 	public HashMap<Coordinate,MapTile> getView(){
@@ -441,7 +448,7 @@ public class Sensor {
 
 	public boolean endTile() {
 		// TODO Auto-generated method stub
-		if(map.getMap().get(controller.getPositionCoords()).getType()== Tile.TileType.EXIT) {
+		if(map.getMap().get(controller.getCarCoords()).getType()== Tile.TileType.EXIT) {
 			return true;
 		}
 		return false;

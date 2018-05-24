@@ -29,7 +29,7 @@ public class ThreePointTurn extends Macro {
 
 	/**
 	 * Updates the car to do the right point given the point at which
-	 * it is in regarding the manpeuvre
+	 * it is in regarding the macro
 	 */
 	@Override
 	public void update(float delta) {
@@ -47,8 +47,8 @@ public class ThreePointTurn extends Macro {
 			controller.realign();
 			controller.setMacro(Forward.class);
 		} else if (leftBlocked && rightBlocked) {
-			if (!sensor.getMap().getDeadEnds().contains(controller.getPositionCoords()))
-				sensor.getMap().getDeadEnds().add(controller.getPositionCoords());
+			if (!sensor.getMap().getDeadEnds().contains(controller.getCarCoords()))
+				sensor.getMap().getDeadEnds().add(controller.getCarCoords());
 			if (controller.getSpeed() < CAR_SPEED)
 				controller.applyForwardAcceleration();
 		} else {
@@ -66,7 +66,8 @@ public class ThreePointTurn extends Macro {
 	}
 	
 	/**
-	 * Checks if the path is clear behind
+	 * Checks if the area  behind the car is blocked.
+	 * 
 	 * @return
 	 */
 	private boolean clearRear() {
@@ -107,10 +108,12 @@ public class ThreePointTurn extends Macro {
 	}
 	
 	/**
-	 * turn according to the right direction you're travelling in
+	 * Turn according to where you are facing.
+	 * 
 	 * @param delta
 	 */
 	private void turn(float delta) {
+		
 		System.out.println("Init: " + initOrientation + ", curr: "+ controller.getOrientation());
 		
 		switch(initOrientation){
@@ -121,6 +124,7 @@ public class ThreePointTurn extends Macro {
 				turning = false;
 			}
 			break;
+			
 		case NORTH:
 			if (!controller.getOrientation().equals(WorldSpatial.Direction.SOUTH))
 				applyTurn(delta);
@@ -128,6 +132,7 @@ public class ThreePointTurn extends Macro {
 				turning = false;
 			}
 			break;
+			
 		case SOUTH:
 			if (!controller.getOrientation().equals(WorldSpatial.Direction.NORTH))
 				applyTurn(delta);
@@ -135,6 +140,7 @@ public class ThreePointTurn extends Macro {
 				turning = false;
 			}
 			break;
+			
 		case WEST:
 			if (!controller.getOrientation().equals(WorldSpatial.Direction.EAST))
 				applyTurn(delta);
@@ -149,11 +155,11 @@ public class ThreePointTurn extends Macro {
 	}
 	
 	/**
-	 * Make a left turn at the right time
+	 * Make a left turn if possible
+	 * 
 	 * @param delta
 	 */
 	private void leftTurn(float delta) {
-		System.out.println("Init: " + initOrientation + ", curr: "+ controller.getOrientation());
 		
 		switch(initOrientation){
 		case EAST:

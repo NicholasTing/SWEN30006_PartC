@@ -14,12 +14,12 @@ public class Reverse extends Macro {
 	
 	private boolean turning = false;
 	private boolean forward = false;
-	private Sensor radar;
+	private Sensor sensor;
 	private WorldSpatial.Direction initOrientation;
 
 	public Reverse(MyAIController controller) {
 		super(controller);
-		this.radar = controller.getSensor();
+		this.sensor = controller.getSensor();
 	}
 
 	/**
@@ -28,29 +28,40 @@ public class Reverse extends Macro {
 	 */
 	@Override
 	public void update(float delta) {
+		
 		if (initOrientation == null) {
 			initOrientation = controller.getOrientation();
 		}
 		
-		boolean leftBlocked = radar.isDirectionBlocked(2, WorldSpatial.RelativeDirection.LEFT);
-		boolean rightBlocked = radar.isDirectionBlocked(2, WorldSpatial.RelativeDirection.RIGHT);
+		boolean leftBlocked = sensor.isDirectionBlocked(2, WorldSpatial.RelativeDirection.LEFT);
+		boolean rightBlocked = sensor.isDirectionBlocked(2, WorldSpatial.RelativeDirection.RIGHT);
 		
-		// if you have finished the maneuvre, start driving straight again
+		// If the macro is finished, start driving straight again
 		if (forward) {
-			System.out.println("forward");
+			
 			controller.realign();
 			controller.setMacro(Forward.class);
-		} else if (leftBlocked && rightBlocked) {
+			
+		} 
+		
+		else if (leftBlocked && rightBlocked) {
+			
 			System.out.println("Left and right blocked");
-			if (!radar.getMap().getDeadEnds().contains(controller.getPositionCoords()))
-				radar.getMap().getDeadEnds().add(controller.getPositionCoords());
+			
+			if (!sensor.getMap().getDeadEnds().contains(controller.getCarCoords()))
+				sensor.getMap().getDeadEnds().add(controller.getCarCoords());
+			
 			controller.applyReverseAcceleration();
 			System.out.println(controller.getVelocity());
-		} else if (!leftBlocked || turning) {
+			
+		}
+		
+		else if (!leftBlocked || turning) {
 			System.out.println("Turning");
 			turning = true;
 			reverseRightTurn(delta);
 		}
+		
 		else {
 			controller.realign();
 			controller.setMacro(Forward.class);
@@ -63,10 +74,10 @@ public class Reverse extends Macro {
 	 * @param delta
 	 */
 	private void reverseRightTurn(float delta) {
-		System.out.println("Init: " + initOrientation + ", curr: "+ controller.getOrientation());
 		
 		switch(initOrientation){
 		case EAST:
+			
 			if (!controller.getOrientation().equals(WorldSpatial.Direction.SOUTH))
 				controller.turnRight(delta);
 			else {
@@ -75,6 +86,7 @@ public class Reverse extends Macro {
 			}
 			break;
 		case NORTH:
+			
 			if (!controller.getOrientation().equals(WorldSpatial.Direction.EAST))
 				controller.turnRight(delta);
 			else {
@@ -83,6 +95,7 @@ public class Reverse extends Macro {
 			}
 			break;
 		case SOUTH:
+			
 			if (!controller.getOrientation().equals(WorldSpatial.Direction.WEST))
 				controller.turnRight(delta);
 			else {
@@ -90,9 +103,12 @@ public class Reverse extends Macro {
 				forward = true;
 			}
 			break;
+			
 		case WEST:
+			
 			if (!controller.getOrientation().equals(WorldSpatial.Direction.NORTH))
 				controller.turnRight(delta);
+			
 			else {
 				turning = false;
 				forward = true;

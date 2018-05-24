@@ -24,7 +24,7 @@ public class Tile {
 		EXIT,
 		EMPTY
 	}
-	
+
 	private static final int LAVA_COST = 50;
 		
 	private Coordinate coords;
@@ -117,15 +117,17 @@ public class Tile {
 	}
 
 	/**
-	 * Returns an approximation to the negative affect the tile will have on the car
+	 * Only the lava tile has the cost, all others have a cost of 0.
+	 * 
 	 * @param tileType
 	 * @return
 	 */
 	public static int getTileCost(TileType tileType) {
-		switch (tileType) {
-			case LAVA: return LAVA_COST;
-			default: return 0;
+		
+		if(tileType == Tile.TileType.LAVA) {
+			return LAVA_COST;
 		}
+		return 0;
 	}
 	
 	
