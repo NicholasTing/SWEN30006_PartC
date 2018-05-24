@@ -9,7 +9,7 @@ import world.WorldSpatial;
  * Jing Kun Ting 792886, Dimosthenis Goulas 762684, Yangxuan Cho 847369
  * Class that drives straight
  */
-public class DriveStraight extends Manoeuvre {
+public class DriveStraight extends Macro {
 
 	public DriveStraight(MyAIController controller) {
 		super(controller);

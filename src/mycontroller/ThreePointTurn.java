@@ -12,7 +12,7 @@ import world.WorldSpatial;
  * Jing Kun Ting 792886, Dimosthenis Goulas 762684, Yangxuan Cho 847369
  * Class that three point turns
  */
-public class ThreePointTurn extends Manoeuvre {
+public class ThreePointTurn extends Macro {
 
 	private boolean turning = true;
 	private boolean forward = false;
@@ -45,7 +45,7 @@ public class ThreePointTurn extends Manoeuvre {
 		} else if (forward) {
 			System.out.println("forward");
 			controller.resetTurningCoords();
-			controller.setManoeuvre(DriveStraight.class);
+			controller.setMacro(DriveStraight.class);
 		} else if (leftBlocked && rightBlocked) {
 			if (!radar.getMap().getDeadEnds().contains(controller.getPositionCoords()))
 				radar.getMap().getDeadEnds().add(controller.getPositionCoords());

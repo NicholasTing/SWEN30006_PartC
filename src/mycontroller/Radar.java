@@ -4,6 +4,7 @@ import java.util.HashMap;
 
 import tiles.GrassTrap;
 import tiles.HealthTrap;
+import tiles.LavaTrap;
 import tiles.MapTile;
 import tiles.TrapTile;
 import utilities.Coordinate;
@@ -25,7 +26,6 @@ public class Radar {
 	// How many minimum units the wall is away from the player.
 	private double sideWallSensitivity = 1;
 	private double frontWallSensitivity = 1;
-
 	
 	public Radar(MyAIController controller) {
 		this.controller = controller;
@@ -194,6 +194,53 @@ public class Radar {
 		return false;
 	}
 	
+	
+	public boolean isLavaAhead(int sensitivity, WorldSpatial.Direction direction) {
+
+		int xModifier = 0;
+		int yModifier = 0;
+		
+		int xOffset = 0;
+		int yOffset = 0;
+		
+		switch (direction) {
+			case EAST: {
+				xModifier = 3;
+				yOffset = (3);
+				break;
+			}
+			case WEST: {
+				xModifier = (-3);
+				yOffset = (-3);
+				break;
+			}
+			case NORTH: {
+				yModifier = 3;
+				xOffset = (-3);
+				break;
+			}
+			case SOUTH: {
+				yModifier = (-3);
+				xOffset = 3;
+				break;
+			}
+		}
+		
+		Coordinate currentPosition = controller.getPositionCoords();
+		for(int i = 0; i <= sensitivity; i++){
+			
+			Coordinate coordinate = new Coordinate(currentPosition.x+i*xModifier+xOffset, currentPosition.y+i*yModifier+yOffset);
+
+			MapTile tile = map.getMap().get(coordinate).getTile();
+			if(tile instanceof LavaTrap) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	
+	
 	/**
 	 * Checks to see if the space ahead is a dead-end or not
 	 * @param orientation the direction you are checking
@@ -341,6 +388,22 @@ public class Radar {
 	
 	public Map getMap() {
 		return map;
+	}
+
+	public boolean endTile() {
+		// TODO Auto-generated method stub
+		if(map.getMap().get(controller.getPositionCoords()).getType()== TileWrap.TileType.EXIT) {
+			return true;
+		}
+		return false;
+	}
+
+	public boolean hitDeadEnd(float f) {
+		// TODO Auto-generated method stub
+		if(controller.getSpeed() == 0 && controller.getHealth() < f) {
+			return true;
+		}
+		return false;
 	}
 	
 }

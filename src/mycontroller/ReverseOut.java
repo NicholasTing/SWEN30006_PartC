@@ -9,7 +9,7 @@ import world.WorldSpatial;
  * Jing Kun Ting 792886, Dimosthenis Goulas 762684, Yangxuan Cho 847369
  *  Class that reverses out
  */
-public class ReverseOut extends Manoeuvre {
+public class ReverseOut extends Macro {
 	
 	private boolean turning = false;
 	private boolean forward = false;
@@ -40,7 +40,7 @@ public class ReverseOut extends Manoeuvre {
 		if (forward) {
 			System.out.println("forward");
 			controller.resetTurningCoords();
-			controller.setManoeuvre(DriveStraight.class);
+			controller.setMacro(DriveStraight.class);
 		} else if (leftBlocked && rightBlocked) {
 			System.out.println("Left and right blocked");
 			if (!radar.getMap().getDeadEnds().contains(controller.getPositionCoords()))

@@ -7,11 +7,11 @@ package mycontroller;
  * Jing Kun Ting 792886, Dimosthenis Goulas 762684, Yangxuan Cho 847369
  *  Class which dictates the way the car behaves
  */
-public abstract class Manoeuvre {
+public abstract class Macro {
 
 	protected MyAIController controller;
 	
-	public Manoeuvre(MyAIController controller) {
+	public Macro(MyAIController controller) {
 		this.controller = controller;
 	}
 	

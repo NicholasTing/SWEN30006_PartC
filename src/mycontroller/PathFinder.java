@@ -149,7 +149,7 @@ public class PathFinder {
 				
 				// If the last three nodes are a corner, and the middle one is grass
 				// that is, grass needs to be turned on
-				if (node.prev.type.equals(TileWrap.TileType.LAVA)&&isCorner(node, node.prev, node.prev.prev))
+				if (node.prev.type.equals(TileWrap.TileType.GRASS)&&isCorner(node, node.prev, node.prev.prev))
 				{
 					return true;
 

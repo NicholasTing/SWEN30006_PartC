@@ -312,7 +312,7 @@ public class Map {
 	 * @param coordinate
 	 * @return
 	 */
-	public boolean  isPassable(Coordinate coordinate) {
+	public boolean isPassable(Coordinate coordinate) {
 		return pathToExit.contains(coordinate);
 	}
 	
