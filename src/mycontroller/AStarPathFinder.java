@@ -1,6 +1,7 @@
 package mycontroller;
 
 import java.util.ArrayList;
+
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -12,17 +13,19 @@ import java.util.PriorityQueue;
 
 import utilities.Coordinate;
 
-// https://codereview.stackexchange.com/questions/38376/a-search-algorithm
-// Dr. Philip Dart said it was okay to use code for path finding according
-// to the post in the discussion forum titled "Pathfinding algorithms"
+/**
+ * SWEN30006 Project Part C
+ * Semester 1, 2018
+ * Group 55
+ * Jing Kun Ting 792886, Dimosthenis Goulas 762684, Yangxuan Cho 847369
+ * 
+ * https://codereview.stackexchange.com/questions/38376/a-search-algorithm
+ * Dr. Philip Dart said it was okay to use code for path finding according
+ * to the post in the discussion forum titled "PathFinding algorithms"
+ */
+
 
 public class AStarPathFinder implements PathFinder {
-
-	@Override
-	public ArrayList<Coordinate> lowestCostExit(Coordinate from) {
-		// TODO Auto-generated method stub
-		return null;
-	}
 	
 	@SuppressWarnings("hiding")
 	final class NodeData<Coordinate> { 
@@ -240,7 +243,18 @@ public class AStarPathFinder implements PathFinder {
 
 	        return null;
 	    }
-
+	    
+	    
+	    /**
+	     * All hope fails when trying to code this part. It just doesnt seem to work at all
+	     * Future improvements would be trying to get this part to work
+	     * @param from
+	     * @return
+	     */
+	    public ArrayList<Coordinate> lowestCostExit(Coordinate from) {
+			// TODO Auto-generated method stub
+			return null;
+		}
 
 	    private ArrayList<Coordinate> path(HashMap<Coordinate, Coordinate> path, Coordinate destination) {
 	        assert path != null;
@@ -255,6 +269,16 @@ public class AStarPathFinder implements PathFinder {
 	        Collections.reverse(pathList);
 	        return pathList;
 	    }
+	}
+	
+	/**
+	 * Future improvements would be to get this part to work.
+	 * At this stage, its too late to change and it would not work.
+	 */
+	@Override
+	public ArrayList<utilities.Coordinate> lowestCostExit(utilities.Coordinate from) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

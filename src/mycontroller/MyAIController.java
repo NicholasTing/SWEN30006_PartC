@@ -71,9 +71,9 @@ public class MyAIController extends CarController {
 
 		if (!macroClass.isInstance(macro)) {	
 			try {
-				if (macro != null) {
-					System.out.println("New macro: " + macroClass.getSimpleName());
-				}
+//				if (macro != null) {
+//					System.out.println("New macro: " + macroClass.getSimpleName());
+//				}
 				macro = macroClass.getConstructor(this.getClass()).newInstance(this);
 				
 			} catch (Exception e) {

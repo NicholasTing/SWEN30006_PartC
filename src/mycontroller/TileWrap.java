@@ -24,8 +24,6 @@ public class TileWrap {
 	}
 
 	private static final int LAVA_COST = 50;
-	private static final int GRASS_COST = 10;
-	private static final int MUD_COST = 10;
 		
 	private Coordinate coords;
 	private TileType type;
@@ -78,70 +76,42 @@ public class TileWrap {
 		
 		TileType res = null;
 		
-//		if (tile.getType().equals(Til)) {
-//			if (tile instanceof tiles.GrassTrap) {
-//				res = TileType.GRASS;
-//			} else if (tile instanceof tiles.MudTrap) {
-//				res = TileType.MUD;
-//			} else if (tile instanceof tiles.LavaTrap) {
-//				res = TileType.LAVA;
-//			}
-//		} else {
-		System.out.println(tile.getType());
-		System.out.println("Getting the tile type");
-			switch (tile.getType()) {
+		switch (tile.getType()) {
+			
+			case WALL: 
+				res = TileType.WALL;
+				break;
 				
-				case WALL: 
-					res = TileType.WALL;
-					break;
-					
-				case ROAD: 
-					res = TileType.ROAD;
-					break;
-					
-				case TRAP:
-					if (tile instanceof tiles.GrassTrap) {
-						res = TileType.GRASS;
-					} else if (tile instanceof tiles.MudTrap) {
-						res = TileType.MUD;
-					} else if (tile instanceof tiles.LavaTrap) {
-						res = TileType.LAVA;
-					}
-					break;
-					
-				case START: 
-					
-					res = TileType.START;
-					break;
-					
-				case FINISH:
-					
-					res = TileType.EXIT;
-					break;
-					
-				default: res = TileType.EMPTY;
-				System.out.println(tile.getType());
-				System.out.println("Empty");
-			}
-//		}
+			case ROAD: 
+				res = TileType.ROAD;
+				break;
+				
+			case TRAP:
+				if (tile instanceof tiles.GrassTrap) {
+					res = TileType.GRASS;
+				} else if (tile instanceof tiles.MudTrap) {
+					res = TileType.MUD;
+				} else if (tile instanceof tiles.LavaTrap) {
+					res = TileType.LAVA;
+				}
+				break;
+				
+			case START: 
+				
+				res = TileType.START;
+				break;
+				
+			case FINISH:
+				
+				res = TileType.EXIT;
+				break;
+				
+			default: res = TileType.EMPTY;
+			
+		}
 		
 		return res;
 		
-	}
-	
-	@Override
-	public String toString() {
-		switch (type) {
-			case WALL: return "W";
-			case ROAD: return ".";
-			case LAVA: return "L";
-			case GRASS: return "G";
-			case MUD: return "M";
-			case START: return "S";
-			case EXIT: return "E";
-			case EMPTY: return " ";
-		}
-		return null;
 	}
 
 	/**
@@ -152,8 +122,6 @@ public class TileWrap {
 	public static int getTileCost(TileType tileType) {
 		switch (tileType) {
 			case LAVA: return LAVA_COST;
-			case GRASS: return GRASS_COST;
-			case MUD: return MUD_COST;
 			default: return 0;
 		}
 	}

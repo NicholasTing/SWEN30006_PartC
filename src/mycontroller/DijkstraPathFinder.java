@@ -8,6 +8,14 @@ import java.util.HashMap;
 import mycontroller.TileWrap.TileType;
 import utilities.Coordinate;
 
+/**
+ * SWEN30006 Project Part C
+ * Semester 1, 2018
+ * Group 55
+ * Jing Kun Ting 792886, Dimosthenis Goulas 762684, Yangxuan Cho 847369
+ *
+ */
+
 public class DijkstraPathFinder implements PathFinder{
 	
 	private Map map;
