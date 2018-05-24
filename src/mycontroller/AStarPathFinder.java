@@ -22,6 +22,9 @@ import utilities.Coordinate;
  * https://codereview.stackexchange.com/questions/38376/a-search-algorithm
  * Dr. Philip Dart said it was okay to use code for path finding according
  * to the post in the discussion forum titled "PathFinding algorithms"
+ * 
+ * This algorithm is not fully functioning yet, future improvements be to try
+ * to get this part to work as it would provide better functionality and performance.
  */
 
 

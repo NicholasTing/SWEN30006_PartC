@@ -7,7 +7,8 @@ import world.WorldSpatial;
  * Semester 1, 2018
  * Group 55
  * Jing Kun Ting 792886, Dimosthenis Goulas 762684, Yangxuan Cho 847369
- *  Class that reverses out
+ * 
+ * Class that provides the macro for the car to reverse out.
  */
 public class Reverse extends Macro {
 	
@@ -15,8 +16,6 @@ public class Reverse extends Macro {
 	private boolean forward = false;
 	private Sensor radar;
 	private WorldSpatial.Direction initOrientation;
-	
-	private final float REV_CAR_SPEED = (float) -1.5;
 
 	public Reverse(MyAIController controller) {
 		super(controller);

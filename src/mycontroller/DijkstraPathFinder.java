@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 
-import mycontroller.Tiles.TileType;
+import mycontroller.Tile.TileType;
 import utilities.Coordinate;
 
 /**
@@ -39,17 +39,13 @@ public class DijkstraPathFinder implements PathFinder{
 			return Integer.MAX_VALUE;
 		}
 		TileType tileType = map.getMap().get(coordinate).getType();
-		return Tiles.getTileCost(tileType);
+		return Tile.getTileCost(tileType);
 	}
 	
 	/**
-	 *  Calculates the lowestCostExit from the current section
-	 *  Updates the pathToExit (all traps on the path are treated as passable by the car)
-	 *  
-	 * TO DO: 
-	 * 1 	needs to deal with situation where the only exit is over 3 tiles of traps
-	 * 2	need to deal with impassable combinations (ie can't turn on grass, or some shit)
-	 *  
+	 * Calculates the lowestCostExit from the current section
+	 * Updates pathToExit
+	 * 
 	 * @param from the coordinates to calculate the path from
 	 * @return the coordinates of the destination tile in the new section
 	 */
@@ -152,7 +148,7 @@ public class DijkstraPathFinder implements PathFinder{
 				
 				// If the last three nodes are a corner, and the middle one is grass
 				// that is, grass needs to be turned on
-				if (node.prev.type.equals(Tiles.TileType.LAVA)&&isCorner(node, node.prev, node.prev.prev))
+				if (node.prev.type.equals(Tile.TileType.LAVA))
 				{
 					return true;
 
@@ -225,7 +221,7 @@ public class DijkstraPathFinder implements PathFinder{
 		private Coordinate coordinate;
 		private CoordinateNode prev;
 		private int cost;
-		private Tiles.TileType type;
+		private Tile.TileType type;
 		
 		/**
 		 *  Constructor for CoordinateNode
@@ -246,7 +242,8 @@ public class DijkstraPathFinder implements PathFinder{
 		}
 		
 		/**
-		 *  Constructor for CoordinateNode
+		 * Constructor for the Node
+		 * 
 		 * @param x x position
 		 * @param y y position
 		 * @param prev previous node in path
@@ -270,8 +267,7 @@ public class DijkstraPathFinder implements PathFinder{
 				// looking at this tile and the previous two, for trap situations
 				if (prev.prev != null && prev.type != null && type != null && prev.prev.type != null)
 					{
-					// If the last three nodes are a corner, and the middle one is grass
-					// that is, grass needs to be turned on
+					// If the tils i made out of lava, add the cost.
 					if (isLavaTile(this))
 					{
 						cost += LAVA_COST;
@@ -282,31 +278,13 @@ public class DijkstraPathFinder implements PathFinder{
 			
 		}
 		
-		
-
 		/**
-		 * CoordinateNodes are compared (ie sorted) based on their cost
+		 * compareTo function to compare nodes based on their cost.
 		 */
 		@Override
 		public int compareTo(CoordinateNode other) {
 			return cost - other.cost;
 		}
 	}
-	/** 
-	 *  Returns true if the three coordinate nodes form a corner
-	 * @param node1
-	 * @param node2
-	 * @param node3
-	 * @return
-	 */
-	private boolean isCorner(CoordinateNode node1, CoordinateNode node2, CoordinateNode node3) {
-		
-		// coordinates are all in a line
-		if ((node2.coordinate.x==node1.coordinate.x && node3.coordinate.x==node1.coordinate.x) ||
-				(node2.coordinate.y==node1.coordinate.y && node3.coordinate.y==node1.coordinate.y))
-			{
-			return false;
-			}
-		return true;
-	}
+	
 }

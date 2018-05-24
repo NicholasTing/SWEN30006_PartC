@@ -441,7 +441,7 @@ public class Sensor {
 
 	public boolean endTile() {
 		// TODO Auto-generated method stub
-		if(map.getMap().get(controller.getPositionCoords()).getType()== Tiles.TileType.EXIT) {
+		if(map.getMap().get(controller.getPositionCoords()).getType()== Tile.TileType.EXIT) {
 			return true;
 		}
 		return false;

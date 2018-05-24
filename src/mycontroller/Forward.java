@@ -7,7 +7,7 @@ import world.WorldSpatial;
  * Semester 1, 2018
  * Group 55
  * Jing Kun Ting 792886, Dimosthenis Goulas 762684, Yangxuan Cho 847369
- * Class that drives straight
+ * Class that provides the macro for the car to go forward in a straight manner.
  */
 public class Forward extends Macro {
 
@@ -17,6 +17,7 @@ public class Forward extends Macro {
 
 	/**
 	 * Get's the direction and speed right given it's current trajectory
+	 * Makes sure that the car moves in an orderly manner.
 	 */
 	@Override
 	public void update(float delta) {
@@ -40,24 +41,27 @@ public class Forward extends Macro {
 	 */
 	private void adjustLeft(WorldSpatial.Direction orientation, float delta) {
 		
+		// Offset used to differentiate between 0 and 360 degrees
+		int EAST_THRESHOLD = 3;
+		
 		switch(orientation){
 		case EAST:
-			if(controller.getAngle() > WorldSpatial.EAST_DEGREE_MIN && controller.getAngle() < WorldSpatial.NORTH_DEGREE){
+			if(controller.getAngle() > WorldSpatial.EAST_DEGREE_MIN + EAST_THRESHOLD){
 				controller.turnRight(delta);
 			}
 			break;
 		case NORTH:
-			if(controller.getAngle() > WorldSpatial.NORTH_DEGREE && controller.getAngle() < WorldSpatial.WEST_DEGREE){
+			if(controller.getAngle() > WorldSpatial.NORTH_DEGREE){
 				controller.turnRight(delta);
 			}
 			break;
 		case SOUTH:
-			if(controller.getAngle() > WorldSpatial.SOUTH_DEGREE && controller.getAngle() < WorldSpatial.EAST_DEGREE_MAX){
+			if(controller.getAngle() > WorldSpatial.SOUTH_DEGREE){
 				controller.turnRight(delta);
 			}
 			break;
 		case WEST:
-			if(controller.getAngle() > WorldSpatial.WEST_DEGREE && controller.getAngle() < WorldSpatial.SOUTH_DEGREE){
+			if(controller.getAngle() > WorldSpatial.WEST_DEGREE){
 				controller.turnRight(delta);
 			}
 			break;
@@ -101,6 +105,7 @@ public class Forward extends Macro {
 		}
 		
 	}
+	
 	
 
 }

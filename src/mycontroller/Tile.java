@@ -9,9 +9,11 @@ import utilities.Coordinate;
  * Semester 1, 2018
  * Group 55
  * Jing Kun Ting 792886, Dimosthenis Goulas 762684, Yangxuan Cho 847369
- * Class that keeps track of all the tiles and their types
+ * 
+ * Class that translates a MapTile to a Tile so that we can use it in the Map and Path Finders.
  */
-public class Tiles {
+public class Tile {
+	
 	public static enum TileType {
 		ROAD,
 		WALL,
@@ -30,14 +32,14 @@ public class Tiles {
 	private Integer section;
 	private MapTile tile;
 	
-	public Tiles(Coordinate coords, MapTile mapTile) {
+	public Tile(Coordinate coords, MapTile mapTile) {
 		this.coords = coords;
 		this.type = getType(mapTile);
 		this.section = null;
 		this.tile = mapTile;
 	}
 	
-	public Tiles(Coordinate coords, MapTile mapTile, Integer section) {
+	public Tile(Coordinate coords, MapTile mapTile, Integer section) {
 		this.coords = coords;
 		this.type = getType(mapTile);
 		this.section = section;
@@ -64,52 +66,53 @@ public class Tiles {
 	}
 
 	/**
-	 * Returns the type of tile it is
-	 * @param tile
-	 * @return
+	 * Returns the type of tile according to our newly defined TileType enum
+	 * 
+	 * @param MapTile tile
+	 * @return TileType
 	 */
 	private TileType getType(MapTile tile) {
 		if (tile == null) {
 			return TileType.EMPTY;
 		}
 		
-		TileType res = null;
+		TileType tileType = null;
 		
 		switch (tile.getType()) {
 			
 			case WALL: 
-				res = TileType.WALL;
+				tileType = TileType.WALL;
 				break;
 				
 			case ROAD: 
-				res = TileType.ROAD;
+				tileType = TileType.ROAD;
 				break;
 				
 			case TRAP:
 				if (tile instanceof tiles.GrassTrap) {
-					res = TileType.GRASS;
+					tileType = TileType.GRASS;
 				} else if (tile instanceof tiles.MudTrap) {
-					res = TileType.MUD;
+					tileType = TileType.MUD;
 				} else if (tile instanceof tiles.LavaTrap) {
-					res = TileType.LAVA;
+					tileType = TileType.LAVA;
 				}
 				break;
 				
 			case START: 
 				
-				res = TileType.START;
+				tileType = TileType.START;
 				break;
 				
 			case FINISH:
 				
-				res = TileType.EXIT;
+				tileType = TileType.EXIT;
 				break;
 				
-			default: res = TileType.EMPTY;
+			default: tileType = TileType.EMPTY;
 			
 		}
 		
-		return res;
+		return tileType;
 		
 	}
 

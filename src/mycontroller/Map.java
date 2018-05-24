@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import mycontroller.Tiles.TileType;
+import mycontroller.Tile.TileType;
 import utilities.Coordinate;
 /**
  * SWEN30006 Project Part C
@@ -36,7 +36,7 @@ public class Map {
 	private Coordinate startSectionCoords = null;
 
 	private int currentSection = -1;
-	private List<Tiles> visited;
+	private List<Tile> visited;
 	
 	private Integer nextSection = null;
 	
@@ -45,8 +45,8 @@ public class Map {
 	
 	private ArrayList<Coordinate> deadEnds = new ArrayList<Coordinate>();
 	
-	private HashMap<Coordinate, Tiles> map = new HashMap<Coordinate, Tiles>();
-	private HashMap<Coordinate, Tiles> prevPrintedMap;
+	private HashMap<Coordinate, Tile> map = new HashMap<Coordinate, Tile>();
+	private HashMap<Coordinate, Tile> prevPrintedMap;
 	
 	public Map(Sensor sensor) {
 		this.sensor = sensor;
@@ -64,7 +64,7 @@ public class Map {
 		// updates sections
 		sensor.getView().forEach((k,v) -> {
 			if (!map.containsKey(k)) {				
-				Tiles t = new Tiles(k,v);
+				Tile t = new Tile(k,v);
 				calcSection(t);
 				
 				map.put(k, t);
@@ -154,8 +154,8 @@ public class Map {
 	 * @param t
 	 * @return
 	 */
-	private Integer calcSection(Tiles t) {
-		visited = new ArrayList<Tiles>();		
+	private Integer calcSection(Tile t) {
+		visited = new ArrayList<Tile>();		
 		return calcSection(t, 0, Integer.MAX_VALUE);
 	}
 	
@@ -172,7 +172,7 @@ public class Map {
 	 * @param currSection
 	 * @return
 	 */
-	private Integer calcSection(Tiles t, int depth, Integer currSection) {
+	private Integer calcSection(Tile t, int depth, Integer currSection) {
 		// If tile is a trap or wall, do not expand
 		try {
 			if (!t.getType().equals(TileType.ROAD)&&!t.getType().equals(TileType.START)&&!t.getType().equals(TileType.EXIT)) {
@@ -267,7 +267,7 @@ public class Map {
 		}
 		System.out.println("\n");
 		
-		prevPrintedMap = (HashMap<Coordinate, Tiles>) map.clone();
+		prevPrintedMap = (HashMap<Coordinate, Tile>) map.clone();
 	}
 
 	/**
@@ -279,7 +279,7 @@ public class Map {
 		}		
 	}
 	
-	public HashMap<Coordinate,Tiles> getMap() {
+	public HashMap<Coordinate,Tile> getMap() {
 		return map;
 	}
 
