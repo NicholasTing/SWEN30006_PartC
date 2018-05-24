@@ -11,7 +11,7 @@ import utilities.Coordinate;
  * Jing Kun Ting 792886, Dimosthenis Goulas 762684, Yangxuan Cho 847369
  * Class that keeps track of all the tiles and their types
  */
-public class TileWrap {
+public class Tiles {
 	public static enum TileType {
 		ROAD,
 		WALL,
@@ -30,15 +30,14 @@ public class TileWrap {
 	private Integer section;
 	private MapTile tile;
 	
-	
-	public TileWrap(Coordinate coords, MapTile mapTile) {
+	public Tiles(Coordinate coords, MapTile mapTile) {
 		this.coords = coords;
 		this.type = getType(mapTile);
 		this.section = null;
 		this.tile = mapTile;
 	}
 	
-	public TileWrap(Coordinate coords, MapTile mapTile, Integer section) {
+	public Tiles(Coordinate coords, MapTile mapTile, Integer section) {
 		this.coords = coords;
 		this.type = getType(mapTile);
 		this.section = section;

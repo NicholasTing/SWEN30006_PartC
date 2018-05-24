@@ -44,8 +44,8 @@ public class ThreePointTurn extends Macro {
 			turn(delta);
 		} else if (forward) {
 			System.out.println("forward");
-			controller.resetTurningCoords();
-			controller.setMacro(DriveStraight.class);
+			controller.realign();
+			controller.setMacro(Forward.class);
 		} else if (leftBlocked && rightBlocked) {
 			if (!sensor.getMap().getDeadEnds().contains(controller.getPositionCoords()))
 				sensor.getMap().getDeadEnds().add(controller.getPositionCoords());

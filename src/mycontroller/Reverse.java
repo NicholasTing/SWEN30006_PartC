@@ -9,7 +9,7 @@ import world.WorldSpatial;
  * Jing Kun Ting 792886, Dimosthenis Goulas 762684, Yangxuan Cho 847369
  *  Class that reverses out
  */
-public class ReverseOut extends Macro {
+public class Reverse extends Macro {
 	
 	private boolean turning = false;
 	private boolean forward = false;
@@ -18,7 +18,7 @@ public class ReverseOut extends Macro {
 	
 	private final float REV_CAR_SPEED = (float) -1.5;
 
-	public ReverseOut(MyAIController controller) {
+	public Reverse(MyAIController controller) {
 		super(controller);
 		this.radar = controller.getSensor();
 	}
@@ -39,8 +39,8 @@ public class ReverseOut extends Macro {
 		// if you have finished the maneuvre, start driving straight again
 		if (forward) {
 			System.out.println("forward");
-			controller.resetTurningCoords();
-			controller.setMacro(DriveStraight.class);
+			controller.realign();
+			controller.setMacro(Forward.class);
 		} else if (leftBlocked && rightBlocked) {
 			System.out.println("Left and right blocked");
 			if (!radar.getMap().getDeadEnds().contains(controller.getPositionCoords()))
@@ -53,8 +53,8 @@ public class ReverseOut extends Macro {
 			reverseRightTurn(delta);
 		}
 		else {
-			controller.resetTurningCoords();
-			controller.setMacro(DriveStraight.class);
+			controller.realign();
+			controller.setMacro(Forward.class);
 		}
 		
 	}

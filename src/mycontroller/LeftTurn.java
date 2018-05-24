@@ -7,9 +7,9 @@ package mycontroller;
  * Jing Kun Ting 792886, Dimosthenis Goulas 762684, Yangxuan Cho 847369
  *  Class that turns left
  */
-public class TurnLeft extends Macro {
+public class LeftTurn extends Macro {
 
-	public TurnLeft(MyAIController controller) {
+	public LeftTurn(MyAIController controller) {
 		super(controller);
 	}
 

@@ -4,8 +4,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 
-
-import mycontroller.TileWrap.TileType;
+import mycontroller.Tiles.TileType;
 import utilities.Coordinate;
 
 /**
@@ -13,6 +12,8 @@ import utilities.Coordinate;
  * Semester 1, 2018
  * Group 55
  * Jing Kun Ting 792886, Dimosthenis Goulas 762684, Yangxuan Cho 847369
+ * 
+ * Dijkstra path finding algorithm
  *
  */
 
@@ -20,7 +21,7 @@ public class DijkstraPathFinder implements PathFinder{
 	
 	private Map map;
 
-	private static final int GRASS_CORNER_COST = 999;
+	private static final int LAVA_COST = 999;
 	
     private HashMap<Integer, Boolean> sectionExplored = new HashMap<Integer,Boolean>();
     
@@ -29,7 +30,7 @@ public class DijkstraPathFinder implements PathFinder{
 	}
 	
 	/**
-	 *  Returns the cost of the tile at a given coordinate
+	 * Get the cost of the tile at the coordinate given
 	 * @param coordinate the coordinate
 	 * @return the cost
 	 */
@@ -38,7 +39,7 @@ public class DijkstraPathFinder implements PathFinder{
 			return Integer.MAX_VALUE;
 		}
 		TileType tileType = map.getMap().get(coordinate).getType();
-		return TileWrap.getTileCost(tileType);
+		return Tiles.getTileCost(tileType);
 	}
 	
 	/**
@@ -87,7 +88,7 @@ public class DijkstraPathFinder implements PathFinder{
 			if (map.getMap().containsKey(node.coordinate)) {
 				Integer newSection = map.getMap().get(node.coordinate).getSection();
 				if (newSection!=null && !newSection.equals(carSection)
-						&& !sectionExplored.containsKey(newSection) && !grassCorner(node)) {
+						&& !sectionExplored.containsKey(newSection) && !isLavaTile(node)) {
 					
 					if (minCost == null) {
 						minCost = node.cost;
@@ -101,7 +102,7 @@ public class DijkstraPathFinder implements PathFinder{
 					
 				} else if (newSection != null && !newSection.equals(carSection)
 						&& sectionExplored.containsKey(newSection) && !sectionExplored.get(newSection)
-						&& !grassCorner(node)) {
+						&& !isLavaTile(node)) {
 					if (minCostReturn == null) {
 						minCostReturn = node.cost;
 					}
@@ -112,7 +113,7 @@ public class DijkstraPathFinder implements PathFinder{
 					
 				} else if (!(newSection != null && !newSection.equals(carSection)
 						&& sectionExplored.containsKey(newSection) && sectionExplored.get(newSection)
-						&& !grassCorner(node))) {
+						&& !isLavaTile(node))) {
 
 					// Adds all neighbours of the current node to the queue
 					int x = node.coordinate.x;
@@ -141,7 +142,7 @@ public class DijkstraPathFinder implements PathFinder{
 	 * @param node
 	 * @return
 	 */
-	private boolean grassCorner(CoordinateNode node) {
+	private boolean isLavaTile(CoordinateNode node) {
 		
 		if (node.prev !=null) {
 			
@@ -151,7 +152,7 @@ public class DijkstraPathFinder implements PathFinder{
 				
 				// If the last three nodes are a corner, and the middle one is grass
 				// that is, grass needs to be turned on
-				if (node.prev.type.equals(TileWrap.TileType.GRASS)&&isCorner(node, node.prev, node.prev.prev))
+				if (node.prev.type.equals(Tiles.TileType.LAVA)&&isCorner(node, node.prev, node.prev.prev))
 				{
 					return true;
 
@@ -224,7 +225,7 @@ public class DijkstraPathFinder implements PathFinder{
 		private Coordinate coordinate;
 		private CoordinateNode prev;
 		private int cost;
-		private TileWrap.TileType type;
+		private Tiles.TileType type;
 		
 		/**
 		 *  Constructor for CoordinateNode
@@ -271,9 +272,9 @@ public class DijkstraPathFinder implements PathFinder{
 					{
 					// If the last three nodes are a corner, and the middle one is grass
 					// that is, grass needs to be turned on
-					if (grassCorner(this))
+					if (isLavaTile(this))
 					{
-						cost += GRASS_CORNER_COST;
+						cost += LAVA_COST;
 					}
 					
 				}

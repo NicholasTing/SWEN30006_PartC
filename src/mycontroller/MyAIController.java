@@ -57,7 +57,7 @@ public class MyAIController extends CarController {
 		super(car);
 		this.car = car;
 		this.sensor = new Sensor(this);
-		setMacro(DriveStraight.class);
+		setMacro(Forward.class);
 		previousOrientation = orientation;
 		turningCoordinate = new Coordinate(0,0);
 
@@ -87,7 +87,7 @@ public class MyAIController extends CarController {
 	 * @return true if there is a left turn available
 	 */
 	private boolean checkLeftTurn() {
-		return isFollowingWall && !sensor.isFollowingBoundary(orientation) && !(macro instanceof TurnRight);
+		return isFollowingWall && !sensor.isFollowingBoundary(orientation) && !(macro instanceof RightTurn);
 	}
 	
 	/**
@@ -96,7 +96,7 @@ public class MyAIController extends CarController {
 	 * @return true if there is a left turn
 	 */
 	private boolean checkLeftTurnAhead(int tilesAhead) {
-		return isFollowingWall &&  sensor.isLeftOpenAhead(tilesAhead, orientation) && !(macro instanceof TurnRight);
+		return isFollowingWall &&  sensor.isLeftOpenAhead(tilesAhead, orientation) && !(macro instanceof RightTurn);
 	}
 	
 	/**
@@ -105,7 +105,7 @@ public class MyAIController extends CarController {
 	 * @return true if there is a left turn
 	 */
 	private boolean checkLavaAhead(int tilesAhead) {
-		return isFollowingWall &&  sensor.isLavaAhead(orientation) && !(macro instanceof TurnRight);
+		return isFollowingWall &&  sensor.isLavaAhead(orientation) && !(macro instanceof RightTurn);
 	}
 	
 	/**
@@ -117,10 +117,10 @@ public class MyAIController extends CarController {
 			targetSpeed = LAVA_SPEED;
 		}
 		
-		else if (macro instanceof TurnLeft || checkLeftTurnAhead(SLOW_DISTANCE)) {
+		else if (macro instanceof LeftTurn || checkLeftTurnAhead(SLOW_DISTANCE)) {
 			targetSpeed = LEFT_SPEED;
 		}
-		else if (macro instanceof TurnRight || sensor.isDirectionBlocked(SLOW_DISTANCE, orientation)) {
+		else if (macro instanceof RightTurn || sensor.isDirectionBlocked(SLOW_DISTANCE, orientation)) {
 			targetSpeed = RIGHT_SPEED;
 		}
 		
@@ -162,7 +162,7 @@ public class MyAIController extends CarController {
 			car.applyReverseAcceleration();
 			
 			targetSpeed = (float)-2.0;
-			setMacro(ReverseOut.class);
+			setMacro(Reverse.class);
 		}
 		
 		else if(isOnHealthTrap && car.getHealth() < 100 ) {
@@ -181,22 +181,22 @@ public class MyAIController extends CarController {
 		
 		// if you're not in the coordinate where you last turned left, and you can turn left, then turn left
 		else if ((!turningCoordinate.equals(getPositionCoords())) && leftTurnAvailable) {			
-			setMacro(TurnLeft.class);
+			setMacro(LeftTurn.class);
 		}
 		
 		// if you shouldn't turn left, and you can go forward, then go forward
 		else if(!isTurning() && !isFrontBlocked){
-			setMacro(DriveStraight.class);
+			setMacro(Forward.class);
 		}
 		
 		else if (!isTurning() && isDeadEnd != null && isDeadEnd == 1) {
-			setMacro(ReverseOut.class); 
+			setMacro(Reverse.class); 
 		}
 		// if you can't turn left and the front is blocked ahead, turn right
 		else if (!isTurning() && isFrontBlocked){
 			isFollowingWall = true;
 			sensor.updateSectionStart();
-			setMacro(TurnRight.class);
+			setMacro(RightTurn.class);
 		}
 	
 		setSpeed();
@@ -209,7 +209,7 @@ public class MyAIController extends CarController {
 	 * @return true if it is turning
 	 */
 	private boolean isTurning() {
-		return (macro instanceof TurnLeft || macro instanceof TurnRight);
+		return (macro instanceof LeftTurn || macro instanceof RightTurn);
 	}
 
 	/**
@@ -219,10 +219,10 @@ public class MyAIController extends CarController {
 	 */
 	private void checkOrientationChange() {
 		if (previousOrientation != orientation) {
-			if (macro instanceof TurnLeft) {
+			if (macro instanceof LeftTurn) {
 				turningCoordinate = getPositionCoords();
 			}
-			setMacro(DriveStraight.class);
+			setMacro(Forward.class);
 			previousOrientation = orientation;
 		}
 	}
@@ -232,7 +232,7 @@ public class MyAIController extends CarController {
 	 * @return true if it is
 	 */
 	private boolean isHandlingDeadend() {
-		return (macro instanceof ThreePointTurn || macro instanceof ReverseOut);
+		return (macro instanceof ThreePointTurn || macro instanceof Reverse);
 	}
 	
 	
@@ -245,9 +245,9 @@ public class MyAIController extends CarController {
 	}
 	
 	/**
-	 * reset the currently left turning coordinate so that it can be reused
+	 * Realign the turning coordinate.
 	 */
-	public void resetTurningCoords() {
+	public void realign() {
 		turningCoordinate = new Coordinate(0,0);
 	}
 	

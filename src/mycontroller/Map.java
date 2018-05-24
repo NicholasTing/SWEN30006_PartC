@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import mycontroller.TileWrap.TileType;
+import mycontroller.Tiles.TileType;
 import utilities.Coordinate;
 /**
  * SWEN30006 Project Part C
@@ -36,7 +36,7 @@ public class Map {
 	private Coordinate startSectionCoords = null;
 
 	private int currentSection = -1;
-	private List<TileWrap> visited;
+	private List<Tiles> visited;
 	
 	private Integer nextSection = null;
 	
@@ -45,8 +45,8 @@ public class Map {
 	
 	private ArrayList<Coordinate> deadEnds = new ArrayList<Coordinate>();
 	
-	private HashMap<Coordinate, TileWrap> map = new HashMap<Coordinate, TileWrap>();
-	private HashMap<Coordinate, TileWrap> prevPrintedMap;
+	private HashMap<Coordinate, Tiles> map = new HashMap<Coordinate, Tiles>();
+	private HashMap<Coordinate, Tiles> prevPrintedMap;
 	
 	public Map(Sensor sensor) {
 		this.sensor = sensor;
@@ -64,7 +64,7 @@ public class Map {
 		// updates sections
 		sensor.getView().forEach((k,v) -> {
 			if (!map.containsKey(k)) {				
-				TileWrap t = new TileWrap(k,v);
+				Tiles t = new Tiles(k,v);
 				calcSection(t);
 				
 				map.put(k, t);
@@ -111,7 +111,7 @@ public class Map {
 				else {
 					nextSection = map.get(pathToExit.get(0)).getSection();
 				}
-				sensor.getController().resetTurningCoords();
+				sensor.getController().realign();
 			}
 			
 			// if we've reached an exit (and are thus in a new section)
@@ -154,8 +154,8 @@ public class Map {
 	 * @param t
 	 * @return
 	 */
-	private Integer calcSection(TileWrap t) {
-		visited = new ArrayList<TileWrap>();		
+	private Integer calcSection(Tiles t) {
+		visited = new ArrayList<Tiles>();		
 		return calcSection(t, 0, Integer.MAX_VALUE);
 	}
 	
@@ -172,7 +172,7 @@ public class Map {
 	 * @param currSection
 	 * @return
 	 */
-	private Integer calcSection(TileWrap t, int depth, Integer currSection) {
+	private Integer calcSection(Tiles t, int depth, Integer currSection) {
 		// If tile is a trap or wall, do not expand
 		try {
 			if (!t.getType().equals(TileType.ROAD)&&!t.getType().equals(TileType.START)&&!t.getType().equals(TileType.EXIT)) {
@@ -208,7 +208,6 @@ public class Map {
 		};
 		
 		for (Coordinate c : toCheck) {
-			System.out.println("Coordinate checking");
 			
 			try {
 				if (map.containsKey(c)
@@ -268,7 +267,7 @@ public class Map {
 		}
 		System.out.println("\n");
 		
-		prevPrintedMap = (HashMap<Coordinate, TileWrap>) map.clone();
+		prevPrintedMap = (HashMap<Coordinate, Tiles>) map.clone();
 	}
 
 	/**
@@ -280,7 +279,7 @@ public class Map {
 		}		
 	}
 	
-	public HashMap<Coordinate,TileWrap> getMap() {
+	public HashMap<Coordinate,Tiles> getMap() {
 		return map;
 	}
 

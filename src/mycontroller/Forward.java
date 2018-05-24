@@ -9,9 +9,9 @@ import world.WorldSpatial;
  * Jing Kun Ting 792886, Dimosthenis Goulas 762684, Yangxuan Cho 847369
  * Class that drives straight
  */
-public class DriveStraight extends Macro {
+public class Forward extends Macro {
 
-	public DriveStraight(MyAIController controller) {
+	public Forward(MyAIController controller) {
 		super(controller);
 	}
 
@@ -81,17 +81,17 @@ public class DriveStraight extends Macro {
 			}
 			break;
 		case NORTH:
-			if(controller.getAngle() < WorldSpatial.NORTH_DEGREE && controller.getAngle() > WorldSpatial.EAST_DEGREE_MIN){
+			if(controller.getAngle() < WorldSpatial.NORTH_DEGREE){
 				controller.turnLeft(delta);
 			}
 			break;
 		case SOUTH:
-			if(controller.getAngle() < WorldSpatial.SOUTH_DEGREE && controller.getAngle() > WorldSpatial.WEST_DEGREE){
+			if(controller.getAngle() < WorldSpatial.SOUTH_DEGREE){
 				controller.turnLeft(delta);
 			}
 			break;
 		case WEST:
-			if(controller.getAngle() < WorldSpatial.WEST_DEGREE && controller.getAngle() > WorldSpatial.NORTH_DEGREE){
+			if(controller.getAngle() < WorldSpatial.WEST_DEGREE){
 				controller.turnLeft(delta);
 			}
 			break;
