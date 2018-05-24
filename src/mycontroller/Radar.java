@@ -2,15 +2,15 @@ package mycontroller;
 
 import java.util.HashMap;
 
+
 import tiles.GrassTrap;
 import tiles.HealthTrap;
 import tiles.LavaTrap;
 import tiles.MapTile;
-import tiles.TrapTile;
+
 import utilities.Coordinate;
-import world.Car;
 import world.WorldSpatial;
-import world.WorldSpatial.Direction;
+
 /**
  * Project Part C
  * Group 105

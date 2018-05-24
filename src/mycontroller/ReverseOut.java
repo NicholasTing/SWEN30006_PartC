@@ -52,6 +52,10 @@ public class ReverseOut extends Macro {
 			turning = true;
 			reverseRightTurn(delta);
 		}
+		else {
+			controller.resetTurningCoords();
+			controller.setMacro(DriveStraight.class);
+		}
 		
 	}
 	

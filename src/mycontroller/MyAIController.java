@@ -1,7 +1,5 @@
 package mycontroller;
 
-import java.util.ArrayList;
-
 import controller.CarController;
 import utilities.Coordinate;
 import world.Car;
@@ -28,16 +26,13 @@ public class MyAIController extends CarController {
 	private Macro macro;
 	private Radar radar;
 	
-	//Car health
-	private float carPrevHealth;
-	
 	private boolean isFollowingWall = false; // This is initialized when the car sticks to a wall.
 	private WorldSpatial.Direction previousOrientation = null; // Keeps track of the previous state
 	
 	// Car Speed to move at
 	final float MAX_SPEED = (float) 4.0;
-	final float LEFT_SPEED = (float) 1.3;
-	final float RIGHT_SPEED = (float) 1.3;
+	final float LEFT_SPEED = (float) 1.5;
+	final float RIGHT_SPEED = (float) 1.5;
 	
 	final float LAVA_SPEED = (float) 5.0;
 
@@ -68,7 +63,7 @@ public class MyAIController extends CarController {
 		setMacro(DriveStraight.class);
 		previousOrientation = orientation;
 		turningCoordinate = new Coordinate(0,0);
-		carPrevHealth = car.getHealth();
+
 	}
 
 	/** 
@@ -139,6 +134,8 @@ public class MyAIController extends CarController {
 	
 	private int carGoingInCirclesLava = 0;
 	private boolean reversing = false;
+	
+	private int middleTime = 0;
 	@Override
 	/**
 	 * Update method for the AI controller
@@ -162,19 +159,25 @@ public class MyAIController extends CarController {
 		
 		boolean isLavaAhead = radar.isLavaAhead(orientation);
 		
+		boolean yolo = true;
+		
+		System.out.println(car.getKey());
 		if (isHandlingDeadend()) {
 			// If you're currently handling a dead end, keep doing what you were doing
 		}
-		else if(car.getKey() == 1 ) {
+		
+		else if(car.getKey() == 1) {
 			System.out.println("Done");
-			car.applyForwardAcceleration();
+			
+			car.applyReverseAcceleration();
 			
 			targetSpeed = (float)-2.0;
-			setMacro(DriveStraight.class);
+			setMacro(ReverseOut.class);
 		}
 		
-		else if(isOnHealthTrap && car.getHealth() < 100) {
+		else if(isOnHealthTrap && car.getHealth() < 100 ) {
 			car.brake();
+			targetSpeed = (float)1.0;
 			car.applyReverseAcceleration();
 			System.out.println("health trap");
 			isHealing = true;
@@ -182,6 +185,7 @@ public class MyAIController extends CarController {
 		
 		else if(car.getHealth() == 100 && isHealing) {
 			car.applyForwardAcceleration();
+			targetSpeed = MAX_SPEED;
 			isHealing = false;
 		}
 		
@@ -205,6 +209,7 @@ public class MyAIController extends CarController {
 			setMacro(TurnRight.class);
 		}
 
+		
 		setSpeed();
 		//actually do what you've chosen
 		macro.update(delta);

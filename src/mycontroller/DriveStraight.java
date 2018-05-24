@@ -24,7 +24,7 @@ public class DriveStraight extends Macro {
 		if(controller.getSpeed() < controller.targetSpeed){
 			controller.applyForwardAcceleration();
 		}
-		else if (controller.getSpeed() > controller.targetSpeed) {
+		else if (controller.getSpeed() > controller.targetSpeed + 0.5) {
 			controller.applyReverseAcceleration();
 		}
 		adjustRight(controller.getOrientation(),delta);
