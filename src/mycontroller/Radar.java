@@ -144,6 +144,49 @@ public class Radar {
 		}
 	
 	/**
+	 * Checks to see if the given direction is blocked
+	 * @param sensitivity how many tiles ahead you want to check
+	 * @param direction what direction you want to check
+	 * @return true if the direction is blocked
+	 */
+	public boolean isLavaTileAhead(double sensitivity, WorldSpatial.Direction direction) {
+
+		int xModifier = 0;
+		int yModifier = 0;
+		
+		switch (direction) {
+			case EAST: {
+				xModifier = 1;
+				break;
+			}
+			case WEST: {
+				xModifier = -1;
+				break;
+			}
+			case NORTH: {
+				yModifier = 1;
+				break;
+			}
+			case SOUTH: {
+				yModifier = -1;
+				break;
+			}
+		}
+		
+		// Loop through the tiles up to sensitivity to check if the car can drive through them
+		Coordinate currentPosition = controller.getPositionCoords();
+			for(int i = 0; i <= sensitivity; i++){
+				
+				Coordinate coordinate = new Coordinate(currentPosition.x+i*xModifier, currentPosition.y+i*yModifier);
+				
+				MapTile tile = getView().get(coordinate);
+				if(tile instanceof LavaTrap) {
+					return true;
+				}
+			}
+			return false;
+		}
+	/**
 	 * Checks to see if the tiles ahead and to the left (how far ahead based on 
 	 * sensitivity)
 	 * @param sensitivity how many tiles ahead
@@ -195,43 +238,49 @@ public class Radar {
 	}
 	
 	
-	public boolean isLavaAhead(int sensitivity, WorldSpatial.Direction direction) {
-
-		int xModifier = 0;
-		int yModifier = 0;
+	public boolean isLavaAhead(WorldSpatial.Direction orientation) {
 		
-		int xOffset = 0;
-		int yOffset = 0;
-		
-		switch (direction) {
-			case EAST: {
-				xModifier = 3;
-				yOffset = (3);
-				break;
-			}
-			case WEST: {
-				xModifier = (-3);
-				yOffset = (-3);
-				break;
-			}
-			case NORTH: {
-				yModifier = 3;
-				xOffset = (-3);
-				break;
-			}
-			case SOUTH: {
-				yModifier = (-3);
-				xOffset = 3;
+		int spaceAhead = 0;
+		// Checks to see how much further the car can go
+		for (int i = 0; i <= 3; i++) {
+			if (isDirectionBlocked(i, orientation)) {
+				spaceAhead = i - 1;
 				break;
 			}
 		}
-		
-		Coordinate currentPosition = controller.getPositionCoords();
-		for(int i = 0; i <= sensitivity; i++){
-			
-			Coordinate coordinate = new Coordinate(currentPosition.x+i*xModifier+xOffset, currentPosition.y+i*yModifier+yOffset);
 
+		for (int sensitivity = 1; sensitivity <= 1; sensitivity++) {
+			int xOffset = 0;
+			int yOffset = 0;
+			
+			switch (orientation) {
+				case EAST: {
+					xOffset = spaceAhead;
+					yOffset = (-sensitivity);
+					break;
+				}
+				case WEST: {
+					xOffset = (-spaceAhead);
+					yOffset = (sensitivity);
+					break;
+				}
+				case NORTH: {
+					xOffset = sensitivity;
+					yOffset = spaceAhead;
+					break;
+				}
+				case SOUTH: {
+					xOffset = (-sensitivity);
+					yOffset = (-spaceAhead);
+					break;
+				}
+			}
+			
+			Coordinate currentPosition = controller.getPositionCoords();
+			
+			Coordinate coordinate = new Coordinate(currentPosition.x+xOffset, currentPosition.y+yOffset);
 			MapTile tile = map.getMap().get(coordinate).getTile();
+			
 			if(tile instanceof LavaTrap) {
 				return true;
 			}
@@ -398,12 +447,4 @@ public class Radar {
 		return false;
 	}
 
-	public boolean hitDeadEnd(float f) {
-		// TODO Auto-generated method stub
-		if(controller.getSpeed() == 0 && controller.getHealth() < f) {
-			return true;
-		}
-		return false;
-	}
-	
 }

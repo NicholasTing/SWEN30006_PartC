@@ -36,8 +36,8 @@ public class MyAIController extends CarController {
 	
 	// Car Speed to move at
 	final float MAX_SPEED = (float) 4.0;
-	final float LEFT_SPEED = (float) 1.5;
-	final float RIGHT_SPEED = (float) 0.8;
+	final float LEFT_SPEED = (float) 1.3;
+	final float RIGHT_SPEED = (float) 1.3;
 	
 	final float LAVA_SPEED = (float) 5.0;
 
@@ -113,7 +113,7 @@ public class MyAIController extends CarController {
 	 * @return true if there is a left turn
 	 */
 	private boolean checkLavaAhead(int tilesAhead) {
-		return isFollowingWall &&  radar.isLavaAhead(tilesAhead, orientation) && !(macro instanceof TurnRight);
+		return isFollowingWall &&  radar.isLavaAhead(orientation) && !(macro instanceof TurnRight);
 	}
 	
 	/**
@@ -160,14 +160,17 @@ public class MyAIController extends CarController {
 		//Finish tile
 		boolean travelledTheMap = radar.endTile();
 		
-		boolean isLavaAhead = radar.isLavaAhead(SLOW_DISTANCE, orientation);
+		boolean isLavaAhead = radar.isLavaAhead(orientation);
 		
 		if (isHandlingDeadend()) {
 			// If you're currently handling a dead end, keep doing what you were doing
 		}
-		
-		else if(isLavaAhead) {
+		else if(car.getKey() == 1 ) {
+			System.out.println("Done");
 			car.applyForwardAcceleration();
+			
+			targetSpeed = (float)-2.0;
+			setMacro(DriveStraight.class);
 		}
 		
 		else if(isOnHealthTrap && car.getHealth() < 100) {
@@ -237,6 +240,7 @@ public class MyAIController extends CarController {
 	private boolean isHandlingDeadend() {
 		return (macro instanceof ThreePointTurn || macro instanceof ReverseOut);
 	}
+	
 	
 	/**
 	 * Gets the car's current position
