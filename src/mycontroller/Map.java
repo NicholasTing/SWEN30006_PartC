@@ -95,9 +95,10 @@ public class Map {
 		// if the car has reached a new cell in this delta time frame
 		if (!carCoords.equals(prevCoords)) {
 			
-			// if we're back at the start
+			// If the car returns to the starting position
 			if (carCoords.equals(startSectionCoords)) {
-				// Remove any deadends from the first time around
+				
+				//Remove the dead ends that were present in the start.
 				deadEnds = new ArrayList<Coordinate>();
 				
 				// Find path to next section
@@ -116,12 +117,11 @@ public class Map {
 			
 			// if we've reached an exit (and are thus in a new section)
 			if (map.containsKey(carCoords)) {
-				Integer thisSection = map.get(carCoords).getSection();
+				Integer thisSection = map.get(carCoords).getSection();	
 				if (nextSection != null && thisSection != null && thisSection == nextSection) {
 					
 					// reset our start section to the exit node
 					startSectionCoords = carCoords;
-					System.out.println("new start section: "+ startSectionCoords);
 					
 					// reset the path to the exit to empty (so the car doesn't go back through the old traps on the previous path
 					pathToExit = new ArrayList<Coordinate>();

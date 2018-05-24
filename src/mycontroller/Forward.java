@@ -7,6 +7,7 @@ import world.WorldSpatial;
  * Semester 1, 2018
  * Group 55
  * Jing Kun Ting 792886, Dimosthenis Goulas 762684, Yangxuan Cho 847369
+ * 
  * Class that provides the macro for the car to go forward in a straight manner.
  */
 public class Forward extends Macro {
@@ -17,7 +18,7 @@ public class Forward extends Macro {
 
 	/**
 	 * Get's the direction and speed right given it's current trajectory
-	 * Makes sure that the car moves in an orderly manner.
+	 * Makes sure that the car does not speed. 
 	 */
 	@Override
 	public void update(float delta) {
@@ -34,9 +35,9 @@ public class Forward extends Macro {
 	}
 	
 	/**
-	 * Try to orient myself to a degree that I was supposed to be at if I am
-	 * misaligned.
-	 * @param orientation the direction it wants to travel
+	 * Adjust the car slightly to the left if it's not moving in a straight manner
+	 * 
+	 * @param orientation
 	 * @param delta
 	 */
 	private void adjustLeft(WorldSpatial.Direction orientation, float delta) {
@@ -73,7 +74,8 @@ public class Forward extends Macro {
 	}
 
 	/**
-	 * Adjust the car slightly right if it's not travelling straight
+	 * Adjust the car slightly to the right if it's not moving in a straight manner
+	 * 
 	 * @param orientation the direction it wants to travel
 	 * @param delta
 	 */

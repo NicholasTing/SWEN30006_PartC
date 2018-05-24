@@ -24,7 +24,7 @@ public class Tile {
 		EXIT,
 		EMPTY
 	}
-
+	
 	private static final int LAVA_COST = 50;
 		
 	private Coordinate coords;

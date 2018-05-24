@@ -5,7 +5,8 @@ package mycontroller;
  * Semester 1, 2018
  * Group 55
  * Jing Kun Ting 792886, Dimosthenis Goulas 762684, Yangxuan Cho 847369
- *  Class that turns left
+ * 
+ * Class that provides the macro for the car to turn left.
  */
 public class LeftTurn extends Macro {
 
@@ -14,7 +15,7 @@ public class LeftTurn extends Macro {
 	}
 
 	/**
-	 * Updates the car to turn left at the right speed
+	 * Car turns right after this update, at a specific speed set in the controller.
 	 */
 	public void update(float delta) {
 		if(controller.getSpeed() < controller.targetSpeed){
