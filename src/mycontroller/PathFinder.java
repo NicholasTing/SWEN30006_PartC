@@ -8,7 +8,9 @@ import utilities.Coordinate;
  * Semester 1, 2018
  * Group 55
  * Jing Kun Ting 792886, Dimosthenis Goulas 762684, Yangxuan Cho 847369
- * Class that finds the best way to go to get out of a section
+ * 
+ * An interface PathFinder which implements strategy patterns, where there are multiple
+ * different path finding strategies including Dijkstra and A Star. 
  */
 public abstract interface PathFinder {
 
