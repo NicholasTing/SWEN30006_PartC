@@ -44,7 +44,7 @@ public class ThursdayAIController extends CarController {
 	// Offset used to differentiate between 0 and 360 degrees
 	private int EAST_THRESHOLD = 3;
 	
-	// The whole map withoput lava and keys
+	// The whole map without lava and keys
 	private HashMap<utilities.Coordinate, MapTile> worldMap = new HashMap<Coordinate, MapTile>();
 	
 	// Store map
