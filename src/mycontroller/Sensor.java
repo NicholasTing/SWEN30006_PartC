@@ -397,7 +397,7 @@ public class Sensor {
 		}
 		
 		// Traps which are not marked as passable should not be driven over
-		if (isImpassableTrap(mapTile, coordinate) )
+		if (isTraversable(mapTile, coordinate) )
 		{
 			return false;
 		}
@@ -418,12 +418,13 @@ public class Sensor {
 	
 	/**
 	 * Checks to see if the given tile is not able to be passed
+	 * 
 	 * @param mapTile type of tile
 	 * @param coordinate
 	 * @return
 	 */
-	private boolean isImpassableTrap(MapTile mapTile, Coordinate coordinate) {
-		return (mapTile instanceof GrassTrap && !map.isPassable(coordinate));
+	private boolean isTraversable(MapTile mapTile, Coordinate coordinate) {
+		return (mapTile.getType() == MapTile.Type.WALL  && !map.isPassable(coordinate));
 	}
 
 	/**
