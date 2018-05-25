@@ -33,7 +33,7 @@ public class DijkstraPathFinder implements PathFinder{
 	 * If the map contains the coordinate, return the tile cost, else
 	 * returns integer max value if the map does not contain the coordinate.
 	 * 
-	 * @param coordinate the coordinate
+	 * @param coordinate
 	 * @return the cost
 	 */
 	private int getCostAtCoordinate(Coordinate coordinate) {
@@ -83,7 +83,7 @@ public class DijkstraPathFinder implements PathFinder{
 			CoordinateNode node = queue.get(0);
 			queue.remove(0);
 			
-			// If the given node is in a new and unexplored section
+			// If the node is in a new and unexplored section
 			if (map.getMap().containsKey(node.coordinate)) {
 				Integer newSection = map.getMap().get(node.coordinate).getSection();
 				if (newSection!=null && !newSection.equals(carSection)
@@ -167,15 +167,15 @@ public class DijkstraPathFinder implements PathFinder{
 	 */
 	public void getExitPath(CoordinateNode node, ArrayList<Coordinate> exits) {
 		
-		// steps backwards through the path from end to start
+		// Traverses from the end path to the start
 		while (true) {
 			Coordinate coordinate = node.coordinate;
 			
-			// adds the coordinates of the node to the pathToExit
+			// Adds the coordinates nodes needed to the pathToExit
 			if (!exits.contains(coordinate))
 				exits.add(coordinate);
 			
-			// go to previous node
+			// Make sure that the previous node is not null
 			if (node.prev != null) {
 				node = node.prev;
 			}
@@ -187,7 +187,7 @@ public class DijkstraPathFinder implements PathFinder{
 	}
 	
 	/**
-	 * Enqueues nodes in the least cost search queue if they are valid
+	 * Enqueues nodes in the lowest cost search queue if they are valid
 	 * 
 	 * @param node the node to be enqueued
 	 * @param queue the queue to enqueue the node in
@@ -204,7 +204,7 @@ public class DijkstraPathFinder implements PathFinder{
 			if (!expanded.containsKey(node.coordinate)) {
 				expanded.put(node.coordinate, true);
 				
-				// if it's not a wall piece, enqueue it
+				// Enqueue the coordinate if it is not a wall
 				if (map.getMap().containsKey(node.coordinate) && !node.type.equals(TileType.WALL)) {
 					queue.add(node);
 				}
@@ -215,6 +215,7 @@ public class DijkstraPathFinder implements PathFinder{
 	
 	/**
 	 *  Class for storing nodes in a path
+	 *  
 	 *  Contains coordinates of the node, its previous node, and the cost of the node
 	 *
 	 */
@@ -267,7 +268,7 @@ public class DijkstraPathFinder implements PathFinder{
 			if (prev !=null) {
 				cost += prev.cost;
 				
-				// looking at this tile and the previous two, for trap situations
+				// Check the previous tiles
 				if (prev.prev != null && prev.type != null && type != null && prev.prev.type != null)
 					{
 					// If the tile is made out of lava, add the cost.

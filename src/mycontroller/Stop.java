@@ -1,17 +1,23 @@
 package mycontroller;
 
+/**
+ * SWEN30006 Project Part C
+ * Semester 1, 2018
+ * Group 55
+ * Jing Kun Ting 792886, Dimosthenis Goulas 762684, Yangxuan Cho 847369
+ * 
+ * Class that provides the macro for the car to stop.
+ */
+
 public class Stop extends Macro{
 
 	public Stop(MyAIController controller) {
 		super(controller);
-		// TODO Auto-generated constructor stub
 	}
 	
 	public void update(float delta) {
 		
-//		controller.targetSpeed = (float)-1.0;
-//		controller.applyReverseAcceleration();
-//		controller.applyForwardAcceleration();
+		//Allows the car to come to a stop
 		controller.applyBrake();
 	
 	}

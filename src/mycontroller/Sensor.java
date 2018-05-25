@@ -14,20 +14,20 @@ import world.WorldSpatial;
 
 /**
  * Project Part C
- * Group 105
+ * Group 55
  * Jing Kun Ting 792886, Dimosthenis Goulas 762684, Yangxuan Cho 847369
  * Software Modelling and Design - University of Melbourne 2017
  * 
- * Sensor to the car where the car will be able to detect what is in the surrounding areas, and make amendments to the car's initial pathing.
- * The sensor provides information about the car's surroundings 
- *  Class which provides information about the car's surroundings to the AI controller
+ * Sensor to the car where the car will be able to detect what is in the surrounding areas, and has the 
+ * ability to make amendments to the car's initial pathing.
+ * 
  */
 public class Sensor {
 	
 	private MyAIController controller;
 	private Map map;
 	
-	// How many minimum units the wall is away from the player.
+	// How closely we want to follow a wall
 	private double sideWallSensitivity = 1;
 	private double frontWallSensitivity = 1;
 	
@@ -37,22 +37,24 @@ public class Sensor {
 	}
 
 	/**
-	 * Check if you have a wall in front of you!
-	 * @param orientation the orientation we are in based on WorldSpatial
-	 * @param currentView what the car can currently see
+	 * Check if there is a wall ahead of us
+	 * 
+	 * @param orientation
 	 * @return
 	 */
-	public boolean isBlockedAhead(WorldSpatial.Direction orientation){
+	public boolean isWallAhead(WorldSpatial.Direction orientation){
 		return isDirectionBlocked(frontWallSensitivity, orientation);
 	}
 	
 	
 	/**
-	 * Check if the wall is on your left hand side given your orientation
-	 * @param orientation the direction you want to check
-	 * @return true if it is following the boundary
+	 * Check if the wall is on our left given the car's current orientation
+	 * 
+	 * @param orientation
+	 * @return true if it is following a wall
 	 */
-	public boolean isFollowingBoundary(WorldSpatial.Direction orientation) {
+	public boolean isFollowingWall(WorldSpatial.Direction orientation) {
+		
 		switch(orientation){
 		case EAST:
 			return isDirectionBlocked(sideWallSensitivity, WorldSpatial.Direction.NORTH);
@@ -70,28 +72,34 @@ public class Sensor {
 	
 	/**
 	 * Checks to see if the given direction is blocked
-	 * @param sensitivity how far in the direction you want to check
-	 * @param direction the direction you want to check
-	 * @return true if it is blocked
+	 * 
+	 * @param sensitivity 
+	 * @param direction 
+	 * 
+	 * @return true if blocked
 	 */
 	public boolean isDirectionBlocked(double sensitivity, WorldSpatial.RelativeDirection direction) {
 		WorldSpatial.Direction orientation = controller.getOrientation();
 		switch(orientation){
+		
 		case EAST:
 			if (direction.equals(WorldSpatial.RelativeDirection.LEFT))
 				return isDirectionBlocked(sensitivity, WorldSpatial.Direction.NORTH);
 			else
 				return isDirectionBlocked(sensitivity, WorldSpatial.Direction.SOUTH);
+			
 		case NORTH:
 			if (direction.equals(WorldSpatial.RelativeDirection.LEFT))
 				return isDirectionBlocked(sensitivity, WorldSpatial.Direction.WEST);
 			else
 				return isDirectionBlocked(sensitivity, WorldSpatial.Direction.EAST);
+			
 		case SOUTH:
 			if (direction.equals(WorldSpatial.RelativeDirection.LEFT))
 				return isDirectionBlocked(sensitivity, WorldSpatial.Direction.EAST);
 			else
 				return isDirectionBlocked(sensitivity, WorldSpatial.Direction.WEST);
+			
 		case WEST:
 			if (direction.equals(WorldSpatial.RelativeDirection.LEFT))
 				return isDirectionBlocked(sensitivity, WorldSpatial.Direction.SOUTH);
@@ -105,9 +113,9 @@ public class Sensor {
 
 	/**
 	 * Checks to see if the given direction is blocked
-	 * @param sensitivity how many tiles ahead you want to check
-	 * @param direction what direction you want to check
-	 * @return true if the direction is blocked
+	 * @param sensitivity 
+	 * @param direction 
+	 * @return true
 	 */
 	public boolean isDirectionBlocked(double sensitivity, WorldSpatial.Direction direction) {
 

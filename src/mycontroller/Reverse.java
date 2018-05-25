@@ -36,7 +36,7 @@ public class Reverse extends Macro {
 		boolean leftBlocked = sensor.isDirectionBlocked(2, WorldSpatial.RelativeDirection.LEFT);
 		boolean rightBlocked = sensor.isDirectionBlocked(2, WorldSpatial.RelativeDirection.RIGHT);
 		
-		// If the macro is finished, start driving straight again
+		// If the macro reverse is finished, car drives forward
 		if (forward) {
 			
 			controller.realign();
@@ -44,9 +44,8 @@ public class Reverse extends Macro {
 			
 		} 
 		
+		// If the car is stuck where both the left and right is blocked and a turn can't be made.
 		else if (leftBlocked && rightBlocked) {
-			
-			System.out.println("Left and right blocked");
 			
 			if (!sensor.getMap().getDeadEnds().contains(controller.getCarCoords()))
 				sensor.getMap().getDeadEnds().add(controller.getCarCoords());
@@ -55,6 +54,7 @@ public class Reverse extends Macro {
 			System.out.println(controller.getVelocity());
 			
 		}
+		
 		
 		else if (!leftBlocked || turning) {
 			System.out.println("Turning");
@@ -70,7 +70,8 @@ public class Reverse extends Macro {
 	}
 	
 	/**
-	 * Implements the right turn when reversing
+	 * Does a reverse right turn if possible
+	 * 
 	 * @param delta
 	 */
 	private void reverseRightTurn(float delta) {

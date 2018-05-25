@@ -10,9 +10,10 @@ import world.WorldSpatial;
  * Semester 1, 2018
  * Group 55
  * Jing Kun Ting 792886, Dimosthenis Goulas 762684, Yangxuan Cho 847369
+ * 
  * Class providing an AI implementation of CarController to escape a maze
  * Keeps an internal map (Map), checks Sensors to determine what is in its
- * surround locations, and uses Macros to move
+ * surround locations, and uses Macros to move around.
  *  
  */
 public class MyAIController extends CarController {
@@ -39,14 +40,13 @@ public class MyAIController extends CarController {
 	// orientation of the car
 	WorldSpatial.Direction orientation;
 	
-	// a coordinate to determine where the last left turn started
 	// Coordinate to determine the last left turn
 	private Coordinate turningCoordinate;
 	
-	//Healing for the car
+	// Check if the car is healing
 	private boolean isHealing = false;
 	
-	//Approaching lava
+	// Check if the car is approaching lava
 	private boolean approachingLava = false;
 
 	/** 
@@ -64,16 +64,14 @@ public class MyAIController extends CarController {
 	}
 
 	/**
-	 * This set the car's current macro to the macro class posted in as a parameter in relevant updates.
+	 * Sets the car's current macro to the macro class passed in as a parameter in relevant updates.
+	 * 
 	 * @param macroClass the macro you want to change to
 	 */
 	public <T extends Macro> void setMacro(Class<T> macroClass) {
 
 		if (!macroClass.isInstance(macro)) {	
 			try {
-//				if (macro != null) {
-//					System.out.println("New macro: " + macroClass.getSimpleName());
-//				}
 				macro = macroClass.getConstructor(this.getClass()).newInstance(this);
 				
 			} catch (Exception e) {
@@ -87,7 +85,7 @@ public class MyAIController extends CarController {
 	 * @return true if there is a left turn available
 	 */
 	private boolean checkLeftTurn() {
-		return isFollowingWall && !sensor.isFollowingBoundary(orientation) && !(macro instanceof RightTurn);
+		return isFollowingWall && !sensor.isFollowingWall(orientation) && !(macro instanceof RightTurn);
 	}
 	
 	/**
@@ -101,11 +99,11 @@ public class MyAIController extends CarController {
 	
 //	/**
 //	 * Checks to see if there is a lava ahead, the car will slow down
-//	 * @param tilesAhead how many tiles ahead it's checking for a left turn
+//	 * @param tilesAhead 
 //	 * @return true if there is a left turn
 //	 */
 //	private boolean checkLavaAhead(int tilesAhead) {
-//		return isFollowingWall &&  sensor.isLavaAhead(orientation) && !(macro instanceof RightTurn);
+//		return isFollowingWall &&  sensor.isLavaAhead(orientation));
 //	}
 //	
 	/**
@@ -145,7 +143,7 @@ public class MyAIController extends CarController {
 		
 		boolean leftTurnAvailable = checkLeftTurn();
 		Integer isDeadEnd = sensor.isDeadEnd(orientation);
-		boolean isFrontBlocked = sensor.isBlockedAhead(orientation);
+		boolean isFrontBlocked = sensor.isWallAhead(orientation);
 		
 		//If it is on health trap, stop and heal for a bit.
 		boolean isOnHealthTrap = sensor.isHealthTrap(orientation);
@@ -230,6 +228,8 @@ public class MyAIController extends CarController {
 	 * to the current orientation. Additionally, if it's turning left, take the turning coordinate
 	 * to be the current coordinate
 	 * 
+	 * Check whether the car state has changed 
+	 * 
 	 * If the car 
 	 */
 	private void checkOrientationChange() {
@@ -243,16 +243,15 @@ public class MyAIController extends CarController {
 	}
 	
 	/**
-	 * Return if the car is handling a dead-end.
-	 * 
-	 * @return true if it is
+	 * Returns true if the car is currently handling a dead-end in the form of Three Point Turn or Reverse
 	 */
 	private boolean isHandlingDeadend() {
 		return (macro instanceof ThreePointTurn || macro instanceof Reverse);
 	}
 	
 	/**
-	 * Gets the car's current position
+	 * Gets the car's current position in coordinate form.
+	 * 
 	 * @return the car's coordinates
 	 */
 	public Coordinate getCarCoords() {
@@ -260,7 +259,7 @@ public class MyAIController extends CarController {
 	}
 	
 	/**
-	 * Realign the turning coordinate.
+	 * Realigns the turning coordinate of the car
 	 */
 	public void realign() {
 		turningCoordinate = new Coordinate(0,0);

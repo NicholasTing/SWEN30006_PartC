@@ -13,9 +13,10 @@ import utilities.Coordinate;
  * Group 55
  * Jing Kun Ting 792886, Dimosthenis Goulas 762684, Yangxuan Cho 847369
  * 
- * Class for managing an internal map of the maze maintained by the AI controller
- * The map is divided into sections, and visited/unvisited sections are recorded
- * The class also has methods for calculating the path from one section to another
+ * This class manages the map of the maze which is constantly updated by the AI controller.
+ * This class uses a path finder to help calculate the path from one section to another.
+ * Also, the map is updated and the location of the keys are added in a hash map for it to be used
+ * at a later stage.
  *
  */
 public class Map {
@@ -28,14 +29,13 @@ public class Map {
 	private Integer minX = null;
 	private Integer minY = null;
 	
-	// Get the cars current coordinate
+	// Initialise car current coordinate
 	private Coordinate carCoords = null;
 	
 	// Car's position in the previous update
-	// Used to tell if the car has moved to a new cell
 	private Coordinate prevCoords = null;
 
-	// Position of the start of a section loop (always next to a wall)
+	// Position of the start of a section
 	private Coordinate startSectionCoords = null;
 
 	private int currentSection = -1;
@@ -43,13 +43,15 @@ public class Map {
 	
 	private Integer nextSection = null;
 	
-	// Maps coordinates to true if they are on the path to the exit and false otherwise
+	// Maps coordinates on exitPath if they are included in the path to exit
 	private ArrayList<Coordinate> exitPath = new ArrayList<Coordinate>();
 	
+	// Dead ends
 	private ArrayList<Coordinate> deadEnds = new ArrayList<Coordinate>();
 	
+	// Location of the keys
 	private HashMap<Integer, Coordinate> keysLocation = new HashMap<Integer, Coordinate>();
-	
+
 	private HashMap<Coordinate, Tile> map = new HashMap<Coordinate, Tile>();
 	
 	
@@ -59,15 +61,15 @@ public class Map {
 	}
 	
 	/**
-	 *  Updates the internal map
-	 *  This is called at the update method of the AI controller, through the radar
+	 *  Explores the map and is updated as the car travels around the map
+	 *  Updated through the radar in the update method of myAIController
 	 */
 	public void exploreMap() {
 		
 		updateCarDetails();
 		updateKeysLocation();
 		
-		// updates sections
+		// Updates sections
 		sensor.getView().forEach((k,v) -> {
 			if (!map.containsKey(k)) {				
 				Tile t = new Tile(k,v);
@@ -120,21 +122,16 @@ public class Map {
 	private void updateCarDetails() {
 		carCoords = sensor.getPositionCoords();
 		
-		// if the car has reached a new cell in this delta time frame
+		// if the car has reached a new cell
 		if (!carCoords.equals(prevCoords)) {
 			
-			// If the car returns to the starting position
+			// If car returns to the starting position of the map
 			if (carCoords.equals(startSectionCoords)) {
-				
-				//Remove the dead ends that were present in the start.
-				deadEnds = new ArrayList<Coordinate>();
-				
+			
 				// Find the best path
 				exitPath = pathFinder.calculateBestPath(carCoords);
 				
-				// If there is no path, set all traps as passable, by setting the path as including all tiles on the map
 				if (exitPath.size()==0) {
-					
 					exitPath=allMapCoordinates();
 				}
 				else {
@@ -143,18 +140,19 @@ public class Map {
 				sensor.getController().realign();
 			}
 			
-			// if we've reached an exit (and are thus in a new section)
+			// If the map contains the key
 			if (map.containsKey(carCoords)) {
 				Integer thisSection = map.get(carCoords).getSection();	
+				
+				//If this section is the same as the next section
 				if (nextSection != null && thisSection != null && thisSection == nextSection) {
 					
-					// reset our start section to the exit node
 					startSectionCoords = carCoords;
 					
-					// reset the path to the exit to empty (so the car doesn't go back through the old traps on the previous path
+					//New exit path created
 					exitPath = new ArrayList<Coordinate>();
 					
-					// Remove any deadends
+					// Remove any dead-end
 					deadEnds = new ArrayList<Coordinate>();
 					nextSection = null;
 				}
@@ -164,7 +162,7 @@ public class Map {
 	}
 
 	/**
-	 * Returns all the coordinates of all tiles in an arraylist
+	 * Returns all the coordinates of all tiles in an ArrayList of coordinates
 	 * @return
 	 */
 	private ArrayList<Coordinate> allMapCoordinates() {
@@ -178,7 +176,7 @@ public class Map {
 	}
 
 	/**
-	 * Calls the section-calculating algorithm below.
+	 * Calls the section calculating algorithm
 	 * @param t
 	 * @return
 	 */
@@ -188,20 +186,18 @@ public class Map {
 	}
 	
 	/**
-	 * Recursive function that assigns each road tile a section number, so that two road tiles that are
-	 * connected by other road tiles will have always have the same section number, and two road tiles that
-	 * are not connected by other road tiles (i.e. separated by traps or walls) will not have the same section
-	 * number.
 	 * 
-	 * This is called when there are new tiles within the car's internal map, meaning some tiles may change
-	 * section if there is now a route of road tiles between them.
+	 * This function is used to calculate the cost and help detect infinite loops, i.e. an island wall
+	 * so that the car does not cycle around and follow the same wall an infinite number of times.
+	 * 
 	 * @param t
 	 * @param depth
 	 * @param currSection
 	 * @return
 	 */
 	private Integer calcCost(Tile t, int depth, Integer currSection) {
-		// If tile is a trap or wall, do not expand
+		
+		// If tile is a  wall, return
 		try {
 			if (!t.getType().equals(TileType.ROAD)&&!t.getType().equals(TileType.START)&&!t.getType().equals(TileType.EXIT)) {
 				return null;
@@ -212,7 +208,7 @@ public class Map {
 			return null;
 		}
 		
-		// Keeps track of expanded nodes
+		// Visited tiles
 		visited.add(t);
 		
 		// If the tile has not previously been given a section, set as Int.MAX
@@ -223,10 +219,10 @@ public class Map {
 			section = t.getSection();
 		}
 		
-		// Sets the section to either the current section, or the previously allocated section.
+		// Sets the section
 		section = Math.min(section, currSection);
 		
-		// Expand node in all four directions
+		// Expand the node to up, down, left and right
 		Coordinate coords = t.getCoords();
 		Coordinate[] toCheck = new Coordinate[] {
 				new Coordinate(coords.x+1, coords.y),
@@ -253,7 +249,7 @@ public class Map {
 			
 		}
 		
-		// Increment the next available section number, and allocate
+		// Increment the next available section number
 		if (section == Integer.MAX_VALUE) {
 			currentSection++;
 			section = currentSection;
@@ -266,7 +262,7 @@ public class Map {
 	}
 
 	/**
-	 * Set our start section to current car position, if it has not yet been set
+	 * Set our start section to current car position
 	 */
 	public void updateSectionStart() {
 		if (startSectionCoords == null) {
@@ -294,7 +290,7 @@ public class Map {
 		return minY;
 	}
 	
-	// Returns the shortest path to exit according to the algorithm used.
+	// Returns the shortest path to exit according to the path finding algorithm used.
 	public ArrayList<Coordinate> getExitPath() {
 		if(!keysLocation.isEmpty()) {
 			returnPathToKeys();

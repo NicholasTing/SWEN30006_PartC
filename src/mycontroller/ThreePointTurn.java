@@ -10,13 +10,14 @@ import world.WorldSpatial;
  * Semester 1, 2018
  * Group 55
  * Jing Kun Ting 792886, Dimosthenis Goulas 762684, Yangxuan Cho 847369
- * Class that three point turns
+ * 
+ * Class that provides the macro for the car to perform a three point turn
  */
 public class ThreePointTurn extends Macro {
 
 	private boolean turning = true;
 	private boolean forward = false;
-	private boolean movingFwd = false;
+	private boolean moveForward = false;
 	private Sensor sensor;
 	private WorldSpatial.Direction initOrientation;
 	
@@ -28,8 +29,8 @@ public class ThreePointTurn extends Macro {
 	}
 
 	/**
-	 * Updates the car to do the right point given the point at which
-	 * it is in regarding the macro
+	 * Updates the car to do the right turn given the point at which
+	 * it is in with respects to the current macro
 	 */
 	@Override
 	public void update(float delta) {
@@ -42,23 +43,29 @@ public class ThreePointTurn extends Macro {
 		
 		if (turning) {
 			turn(delta);
-		} else if (forward) {
-			System.out.println("forward");
+		} 
+		
+		else if (forward) {
 			controller.realign();
 			controller.setMacro(Forward.class);
-		} else if (leftBlocked && rightBlocked) {
+		} 
+		
+		else if (leftBlocked && rightBlocked) {
 			if (!sensor.getMap().getDeadEnds().contains(controller.getCarCoords()))
 				sensor.getMap().getDeadEnds().add(controller.getCarCoords());
 			if (controller.getSpeed() < CAR_SPEED)
 				controller.applyForwardAcceleration();
-		} else {
+			
+		} 
+		else {
 			leftTurn(delta);
 		}
 		
 	}
 	
 	/**
-	 * Checks to see if the front is clear ahead
+	 * Checks to see if the front of the car is empty
+	 * 
 	 * @return
 	 */
 	private boolean clearFront() {
@@ -66,11 +73,12 @@ public class ThreePointTurn extends Macro {
 	}
 	
 	/**
-	 * Checks if the area  behind the car is blocked.
+	 * Checks if the area behind the car is empty
 	 * 
 	 * @return
 	 */
 	private boolean clearRear() {
+		
 		switch(controller.getOrientation()){
 		case EAST:
 			return sensor.isDirectionBlocked(1, WorldSpatial.Direction.WEST);
@@ -86,20 +94,22 @@ public class ThreePointTurn extends Macro {
 	}
 	
 	/**
-	 * Turns in the right direction given where it is in the manoeuvre
+	 * Turns in the right direction given where it is in with respect to the current macro
+	 * 
 	 * @param delta
 	 */
 	private void applyTurn(float delta) {	
-		if (!movingFwd) {
+		
+		if (!moveForward) {
 			if (!clearRear()) {
-				movingFwd = true;
+				moveForward = true;
 			} else {
 				controller.applyReverseAcceleration();
 				controller.turnLeft(delta);
 			}
 		} else {
 			if (!clearFront()) {
-				movingFwd = false;
+				moveForward = false;
 			} else {
 				controller.applyForwardAcceleration();
 				controller.turnLeft(delta);
@@ -108,13 +118,11 @@ public class ThreePointTurn extends Macro {
 	}
 	
 	/**
-	 * Turn according to where you are facing.
+	 * Turn according to the direction you are facing.
 	 * 
 	 * @param delta
 	 */
 	private void turn(float delta) {
-		
-		System.out.println("Init: " + initOrientation + ", curr: "+ controller.getOrientation());
 		
 		switch(initOrientation){
 		case EAST:

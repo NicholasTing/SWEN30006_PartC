@@ -76,7 +76,7 @@ public class Forward extends Macro {
 	/**
 	 * Adjust the car slightly to the right if it's not moving in a straight manner
 	 * 
-	 * @param orientation the direction it wants to travel
+	 * @param orientation
 	 * @param delta
 	 */
 	private void adjustRight(WorldSpatial.Direction orientation, float delta) {

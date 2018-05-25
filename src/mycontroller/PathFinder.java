@@ -19,11 +19,11 @@ public abstract interface PathFinder {
 	 * Updates the pathToExit 
 	 *  
 	 * By using the currentView of the car, explores the map and draws its own map
-	 * Updates the path to exit and then applies its specific algorithm to find the 
+	 * Updates the path to exit and then applies its specific path finding algorithm to find the 
 	 * lowest Cost to exit.
 	 *
 	 * @param from the coordinate you want to calculate the shortest path from
-	 * @return the coordinates of the destination tile in the new section
+	 * @return the coordinates of the destination tile
 	 */
 	public abstract ArrayList<Coordinate> calculateBestPath(Coordinate from);
 	
