@@ -43,9 +43,6 @@ public class MyAIController extends CarController {
 	// Coordinate to determine the last left turn
 	private Coordinate turningCoordinate;
 	
-	// Check if the car is healing
-	private boolean isHealing = false;
-	
 	// Check if the car is approaching lava
 	private boolean approachingLava = false;
 
@@ -57,10 +54,11 @@ public class MyAIController extends CarController {
 		super(car);
 		this.car = car;
 		this.sensor = new Sensor(this);
-		setMacro(Forward.class);
 		previousOrientation = orientation;
 		turningCoordinate = new Coordinate(0,0);
-		prevHealth = car.getHealth();
+		
+		setMacro(Forward.class);
+		
 	}
 
 	/**
@@ -90,6 +88,7 @@ public class MyAIController extends CarController {
 	
 	/**
 	 * Checks to see if there is a left turn available that the car will get to
+	 * 
 	 * @param tilesAhead how many tiles ahead it's checking for a left turn
 	 * @return true if there is a left turn
 	 */
@@ -100,14 +99,14 @@ public class MyAIController extends CarController {
 //	/**
 //	 * Checks to see if there is a lava ahead, the car will slow down
 //	 * @param tilesAhead 
-//	 * @return true if there is a left turn
+//	 * @return true if there is lava ahead
 //	 */
 //	private boolean checkLavaAhead(int tilesAhead) {
 //		return isFollowingWall &&  sensor.isLavaAhead(orientation));
 //	}
 //	
 	/**
-	 * Setting the speed of the car
+	 * Set speed of the car according to what is doing or about to do
 	 */
 	private void setSpeed() {
 		
@@ -126,12 +125,12 @@ public class MyAIController extends CarController {
 			targetSpeed = MAX_SPEED;
 		}
 	}
-
-	private float prevHealth;
+	
 	@Override
 	/**
 	 * Update method for the AI controller
-	 * Relevant cases included inside this method.
+	 * 
+	 * According to specific scenarios that the car facem relevant updates will be called.
 	 */
 	public void update(float delta) {
 		// gets orientation
@@ -148,55 +147,44 @@ public class MyAIController extends CarController {
 		//If it is on health trap, stop and heal for a bit.
 		boolean isOnHealthTrap = sensor.isHealthTrap(orientation);
 		
+		// Check if there is lava ahead
 		//boolean isLavaAhead = sensor.isLavaAhead(orientation);
 		
 		// Collected all the keys
 		boolean allKeysCollected = collectedAllKeys();
 		
+		// If the car health is less than 80, stop on a health trap to regenerate
 		if(car.getHealth() < 80 && isOnHealthTrap) {
-			
-			isHealing = true;
 			setMacro(Stop.class);
 			System.out.println("Car is healing. Please wait.");
-			
 		}
 		
 		else if (isHandlingDeadend()) {
-			// If you're currently handling a dead end, keep doing what you were doing
+			// If car is handling dead-end, continue.
 		}
 		
-		else if(car.getHealth() == 100 && isHealing) {
-			isHealing = false;
-			setMacro(Forward.class);
-		}
-		
-		else if(car.getSpeed() == 0 && car.getHealth() < prevHealth) {
-			if(macro instanceof Forward) {
-				setMacro(Reverse.class);
-			}
-			
-		}
-		
+		// If the car has collected all the keys in the map, tries to exit the map.
 		else if(allKeysCollected) {
 			System.out.println("Done");
 			sensor.exitMap();
-			
 		}
 		
-		// if you're not in the coordinate where you last turned left, and you can turn left, then turn left
+		// If there is a left turn available, turn left
 		else if ((!turningCoordinate.equals(getCarCoords())) && leftTurnAvailable) {			
 			setMacro(LeftTurn.class);
 		}
 		
-		// if you shouldn't turn left, and you can go forward, then go forward
+		// If you aren't turning and you can move forward, drive forward
 		else if(!isTurning() && !isFrontBlocked){
 			setMacro(Forward.class);
 		}
 		
+		// If its not turning and it is a dead end, reverse.
 		else if (!isTurning() && isDeadEnd != null && isDeadEnd == 1) {
 			setMacro(Reverse.class); 
 		}
-		// if you can't turn left and the front is blocked ahead, turn right
+		
+		// If it is  not turning and the front is blocked, turn right instead
 		else if (!isTurning() && isFrontBlocked){
 			isFollowingWall = true;
 			sensor.updateSectionStart();
@@ -204,13 +192,17 @@ public class MyAIController extends CarController {
 		}
 	
 		setSpeed();
-		prevHealth = car.getHealth();
-		//actually do what you've chosen
+		
+		// Calls macro update to apply what the car is supposed to do
 		macro.update(delta);
 	}
 
+	/**
+	 * Returns if the car has collected all the keys in the map
+	 * @return
+	 */
 	private boolean collectedAllKeys() {
-		// TODO Auto-generated method stub
+		
 		return car.getKey() == 1;
 	}
 
@@ -224,15 +216,14 @@ public class MyAIController extends CarController {
 	}
 
 	/**
-	 * Checks whether the car's state has changed or not, if it has, set the previous orientation
-	 * to the current orientation. Additionally, if it's turning left, take the turning coordinate
-	 * to be the current coordinate
 	 * 
-	 * Check whether the car state has changed 
+	 * Check whether the car state has changed from the previous orientation. If it has changed,
+	 * update the car's current orientation. 
 	 * 
-	 * If the car 
 	 */
 	private void checkOrientationChange() {
+		
+		
 		if (previousOrientation != orientation) {
 			if (macro instanceof LeftTurn) {
 				turningCoordinate = getCarCoords();
@@ -264,7 +255,7 @@ public class MyAIController extends CarController {
 	public void realign() {
 		turningCoordinate = new Coordinate(0,0);
 	}
-	
+
 	public Sensor getSensor() {
 		return sensor;
 	}

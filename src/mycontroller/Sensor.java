@@ -113,6 +113,7 @@ public class Sensor {
 
 	/**
 	 * Checks to see if the given direction is blocked
+	 * 
 	 * @param sensitivity 
 	 * @param direction 
 	 * @return true
@@ -141,7 +142,7 @@ public class Sensor {
 			}
 		}
 		
-		// Loop through the tiles up to sensitivity to check if the car can drive through them
+		// Loop tiles up to wall sensitivity to check if the car can drive pass through them
 		Coordinate currentPosition = controller.getCarCoords();
 			for(int i = 0; i <= sensitivity; i++){
 				
@@ -156,10 +157,11 @@ public class Sensor {
 		}
 	
 	/**
-	 * Checks to see if the given direction is blocked
-	 * @param sensitivity how many tiles ahead you want to check
-	 * @param direction what direction you want to check
-	 * @return true if the direction is blocked
+	 * Checks to see if there is lava in the direction ahead 
+	 * 
+	 * @param sensitivity 
+	 * @param direction 
+	 * @return true
 	 */
 	public boolean isLavaTileAhead(double sensitivity, WorldSpatial.Direction direction) {
 
