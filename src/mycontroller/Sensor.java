@@ -1,5 +1,6 @@
 package mycontroller;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 
@@ -454,4 +455,30 @@ public class Sensor {
 		return false;
 	}
 
-}
+	public void exitMap() {
+		// TODO Auto-generated method stub
+		ArrayList<Coordinate> exit = getMap().getExitPath();
+		ArrayList<Coordinate> followPathToExit = getPathToExit(exit);
+		
+		controller.targetSpeed = (float)-2.0;
+		controller.applyReverseAcceleration();
+		controller.setMacro(Reverse.class);
+		
+	}
+	
+	private ArrayList<Coordinate> getPathToExit(ArrayList<Coordinate> exit) {
+			
+			ArrayList<Coordinate> exitInOrder = new ArrayList<Coordinate>();
+			try {
+				while(exit != null) {
+					Coordinate nextMove = exit.remove(0);
+					exitInOrder.add(nextMove);
+					System.out.println(nextMove.toString());
+				}
+			} catch (Exception e) {
+				
+			}
+			return exitInOrder;
+		}
+	
+	}

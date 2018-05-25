@@ -1,7 +1,5 @@
 package mycontroller;
 
-import java.util.ArrayList;
-
 import controller.CarController;
 
 import utilities.Coordinate;
@@ -62,7 +60,7 @@ public class MyAIController extends CarController {
 		setMacro(Forward.class);
 		previousOrientation = orientation;
 		turningCoordinate = new Coordinate(0,0);
-
+		prevHealth = car.getHealth();
 	}
 
 	/**
@@ -131,6 +129,7 @@ public class MyAIController extends CarController {
 		}
 	}
 
+	private float prevHealth;
 	@Override
 	/**
 	 * Update method for the AI controller
@@ -151,36 +150,39 @@ public class MyAIController extends CarController {
 		//If it is on health trap, stop and heal for a bit.
 		boolean isOnHealthTrap = sensor.isHealthTrap(orientation);
 		
-		//Finish tile
-		boolean travelledTheMap = sensor.endTile();
-		
 		//boolean isLavaAhead = sensor.isLavaAhead(orientation);
 		
 		// Collected all the keys
 		boolean allKeysCollected = collectedAllKeys();
 		
-		if(car.getHealth() < 100 && isOnHealthTrap) {
+		if(car.getHealth() < 80 && isOnHealthTrap) {
 			
-			car.brake();
-			targetSpeed = (float)1.0;
-			car.applyReverseAcceleration();
-			System.out.println("Car is healing. Please wait.");
 			isHealing = true;
-		}
-		
-		else if(car.getHealth() == 100 && isHealing) {
-			car.applyForwardAcceleration();
-			targetSpeed = MAX_SPEED;
-			isHealing = false;
+			setMacro(Stop.class);
+			System.out.println("Car is healing. Please wait.");
+			
 		}
 		
 		else if (isHandlingDeadend()) {
 			// If you're currently handling a dead end, keep doing what you were doing
 		}
 		
+		else if(car.getHealth() == 100 && isHealing) {
+			isHealing = false;
+			setMacro(Forward.class);
+		}
+		
+		else if(car.getSpeed() == 0 && car.getHealth() < prevHealth) {
+			if(macro instanceof Forward) {
+				setMacro(Reverse.class);
+			}
+			
+		}
+		
 		else if(allKeysCollected) {
 			System.out.println("Done");
-			driveToExit();
+			sensor.exitMap();
+			
 		}
 		
 		// if you're not in the coordinate where you last turned left, and you can turn left, then turn left
@@ -204,19 +206,9 @@ public class MyAIController extends CarController {
 		}
 	
 		setSpeed();
+		prevHealth = car.getHealth();
 		//actually do what you've chosen
 		macro.update(delta);
-	}
-	
-	private void driveToExit() {
-		
-		ArrayList<Coordinate> exit = sensor.getMap().getExitPath();
-		ArrayList<Coordinate> followPathToExit = getPathToExit(exit);
-				
-		targetSpeed = (float)-2.0;
-		applyReverseAcceleration();
-		setMacro(Reverse.class);
-		
 	}
 
 	private boolean collectedAllKeys() {
@@ -257,21 +249,6 @@ public class MyAIController extends CarController {
 	 */
 	private boolean isHandlingDeadend() {
 		return (macro instanceof ThreePointTurn || macro instanceof Reverse);
-	}
-	
-	private ArrayList<Coordinate> getPathToExit(ArrayList<Coordinate> exit) {
-		
-		ArrayList<Coordinate> exitInOrder = new ArrayList<Coordinate>();
-		try {
-			while(exit != null) {
-				Coordinate nextMove = exit.remove(0);
-				exitInOrder.add(nextMove);
-				System.out.println(nextMove.toString());
-			}
-		} catch (Exception e) {
-			
-		}
-		return exitInOrder;
 	}
 	
 	/**

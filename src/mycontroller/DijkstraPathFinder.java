@@ -114,7 +114,7 @@ public class DijkstraPathFinder implements PathFinder{
 						&& sectionExplored.containsKey(newSection) && sectionExplored.get(newSection)
 						&& !isLavaTile(node))) {
 
-					// Adds all neighbours of the current node to the queue
+					// Adds all the neighbours of the current node if it is valid to the queue
 					int x = node.coordinate.x;
 					int y = node.coordinate.y;
 					enqueueIfValid(new CoordinateNode(x+1, y, node), queue, expanded);
@@ -126,7 +126,7 @@ public class DijkstraPathFinder implements PathFinder{
 		}
 		
 		if (exits.isEmpty()) {
-			System.out.println("returning backup");
+			
 			sectionExplored.put(carSection, true);
 			return exitsReturn;
 		}
@@ -145,7 +145,7 @@ public class DijkstraPathFinder implements PathFinder{
 		
 		if (node.prev !=null) {
 			
-			// looking at this tile and the previous two, for trap situations
+			// Look at the tile and previous tiles to check for lava
 			if (node.prev.prev != null && node.prev.type != null && node.type != null && node.prev.prev.type != null)
 				{
 				
@@ -161,8 +161,8 @@ public class DijkstraPathFinder implements PathFinder{
 	}
 
 	/**
-	 *  Given a node in a path, sets the pathToExit as all the nodes in that path
-	 *  All nodes in the path will now be passable (ie all traps can be traversed)
+	 * Gets the optimum exit path for the car to leave the stage.
+	 * 
 	 * @param node the node
 	 */
 	public void getExitPath(CoordinateNode node, ArrayList<Coordinate> exits) {
@@ -197,10 +197,10 @@ public class DijkstraPathFinder implements PathFinder{
 		int x = node.coordinate.x;
 		int y = node.coordinate.y;
 		
-		// if the coordinate is on the map
+		// if the coordinate exists on the map
 		if (x >= map.getMinX() && y >= map.getMinY() && x <= map.getMaxX() && y <= map.getMaxY()) {
 			
-			// if it is unexpanded
+			// if unexpanded
 			if (!expanded.containsKey(node.coordinate)) {
 				expanded.put(node.coordinate, true);
 				
@@ -261,7 +261,8 @@ public class DijkstraPathFinder implements PathFinder{
 		}
 		
 		private void setCost() {
-			// calculate the cost
+			
+			// Calculates the cost
 			cost = getCostAtCoordinate(coordinate);
 			if (prev !=null) {
 				cost += prev.cost;
