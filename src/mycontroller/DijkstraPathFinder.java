@@ -163,7 +163,7 @@ public class DijkstraPathFinder implements PathFinder{
 	/**
 	 * Gets the optimum exit path for the car to leave the stage.
 	 * 
-	 * @param node the node
+	 * @param node 
 	 */
 	public void getExitPath(CoordinateNode node, ArrayList<Coordinate> exits) {
 		
@@ -189,9 +189,9 @@ public class DijkstraPathFinder implements PathFinder{
 	/**
 	 * Enqueues nodes in the lowest cost search queue if they are valid
 	 * 
-	 * @param node the node to be enqueued
-	 * @param queue the queue to enqueue the node in
-	 * @param expanded a 2d array of expanded coordinates
+	 * @param node 
+	 * @param queue 
+	 * @param expanded 
 	 */
 	private void enqueueIfValid(CoordinateNode node, ArrayList<CoordinateNode> queue, HashMap<Coordinate,Boolean> expanded) {
 		int x = node.coordinate.x;

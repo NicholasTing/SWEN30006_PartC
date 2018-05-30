@@ -3,8 +3,6 @@ package mycontroller;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-
-import tiles.GrassTrap;
 import tiles.HealthTrap;
 import tiles.LavaTrap;
 import tiles.MapTile;
@@ -13,10 +11,10 @@ import utilities.Coordinate;
 import world.WorldSpatial;
 
 /**
- * Project Part C
+ * SWEN30006 Project Part C
+ * Semester 1, 2018
  * Group 55
  * Jing Kun Ting 792886, Dimosthenis Goulas 762684, Yangxuan Cho 847369
- * Software Modelling and Design - University of Melbourne 2017
  * 
  * Sensor to the car where the car will be able to detect what is in the surrounding areas, and has the 
  * ability to make amendments to the car's initial pathing.
